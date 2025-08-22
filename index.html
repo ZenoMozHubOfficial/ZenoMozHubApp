@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenoMoz Hub</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Georgia', serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Logo */
+    .logo {
+      width: 200px;
+      margin: 40px auto 20px;
+      display: block;
+    }
+
+    /* Title */
+    h1 {
+      font-size: 2.5rem;
+      color: #ff2a2a;
+      margin: 10px 0;
+    }
+
+    h1 span {
+      color: #fff;
+    }
+
+    /* Description */
+    .description {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto 30px;
+      color: #ddd;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 250px;
+      margin: 15px auto;
+      padding: 18px;
+      border: 3px solid #fff;
+      border-radius: 50px;
+      background: linear-gradient(to bottom, #333, #000);
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(to bottom, #555, #222);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Roblox_Logo_2022.svg" alt="Logo" class="logo">
+
+  <!-- Title -->
+  <h1>ZenoMoz <span>|</span> Hub</h1>
+
+  <!-- Description -->
+  <div class="description">
+⚡ ZenoUPLHub (ZUH) ⚡<br>
+A powerful app tool, that lets users:<br><br>
+✨ Get the latest executors 🖥️<br>
+📜 Browse & share scripts easily<br>
+🔍 Use a fast search bar to find what you need<br>
+📂 Upload your own creations & help the community<br>
+📢 Stay updated with the latest news & updates<br>
+🛠️ Access extra Roblox tools to boost your experience<br>
+🔑 Secure access with our unique Key System for protection & exclusivity  
+  </div>
+
+  <!-- Buttons -->
+  <a href="https://github.com/SkyeMozScriptzHub/ZenoMozHub-Official/tree/main/%F0%9D%90%93%F0%9D%90%A8%F0%9D%90%A8%F0%9D%90%A5%F0%9D%90%9B%F0%9D%90%A8%F0%9D%90%B1" class="btn" onclick="playClick()">Toolbox</a>
+  <a href="https://github.com/SkyeMozScriptzHub/ZenoMozHub-Official/tree/main/Tutorial" class="btn" onclick="playClick()">Tutorial</a>
+  <a href="https://github.com/SkyeMozScriptzHub/ZenoMozHub-Official/tree/main/%F0%9D%90%86%F0%9D%90%9E%F0%9D%90%AD%20%F0%9D%90%92%F0%9D%90%9C%F0%9D%90%AB%F0%9D%90%A2%F0%9D%90%A9%F0%9D%90%AD%F0%9D%90%AC" class="btn" onclick="playClick()">Get Scripts</a>
+  <a href="https://github.com/SkyeMozScriptzHub/ZenoMozHub-Official/tree/main/Current%20Keys" class="btn" onclick="playClick()">Get Key</a>
+
+  <!-- Sound Effect -->
+  <audio id="clickSound" src="sounds/click.mp3"></audio>
+  <script>
+    function playClick() {
+      const sound = document.getElementById('clickSound');
+      sound.currentTime = 0;
+      sound.play();
+    }
+  </script>
+</body>
+</html>
