@@ -1,3 +1,4 @@
+/* Page base */
 body {
   background-color: #111;
   color: #fff;
@@ -7,11 +8,13 @@ body {
   padding: 0;
 }
 
+/* Logo */
 .logo img {
   margin-top: 20px;
   width: 120px;
 }
 
+/* Title */
 h1 {
   color: #ff3333;
   font-size: 2.5rem;
@@ -21,20 +24,29 @@ h1 {
 p {
   font-size: 1.1rem;
   margin-bottom: 20px;
+  color: #ddd;
 }
 
-.buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 200px;
-  margin: 0 auto;
+/* Buttons */
+.btn {
+  display: block;
+  width: 250px;
+  margin: 15px auto;
+  padding: 18px;
+  border: 3px solid #fff;
+  border-radius: 50px;
+  background: linear-gradient(to bottom, #333, #000);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
-button {
-  padding: 12px;
-  font-size: 1.1rem;
-  border: none;
+.btn:hover {
+  background: linear-gradient(to bottom, #555, #222);
+  transform: scale(1.05);
+}  border: none;
   border-radius: 8px;
   cursor: pointer;
   background-color: #222;
