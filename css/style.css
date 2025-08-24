@@ -1,51 +1,40 @@
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
-
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
-
-const stars = [];
-const numStars = 200;
-
-for (let i = 0; i < numStars; i++) {
-  stars.push({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    z: Math.random() * width,
-    size: Math.random() * 1.5,
-  });
+/* Page base */
+body {
+  background-color: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-function animateStars() {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.fillStyle = "white";
-  stars.forEach(star => {
-    star.z -= 2;
-    if (star.z <= 0) {
-      star.x = Math.random() * width;
-      star.y = Math.random() * height;
-      star.z = width;
-    }
-
-    let sx = (star.x - width / 2) * (width / star.z) + width / 2;
-    let sy = (star.y - height / 2) * (width / star.z) + height / 2;
-    let radius = star.size * (width / star.z);
-    ctx.beginPath();
-    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  requestAnimationFrame(animateStars);
+/* Video Background */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* cover the screen */
+  object-position: center top; /* keep top visible on vertical screens */
+  z-index: -1;
+  opacity: 0.5;           /* dim video so buttons pop */
 }
 
-animateStars();
+/* Responsive tweak for mobile / very tall screens */
+@media (max-width: 768px) {
+  #bg-video {
+    object-fit: cover;
+    object-position: center top;
+  }
+}
 
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});}
+/* Logo */
+.logo img {
+  margin-top: 20px;
+  width: 120px;
+}
 
 /* Title */
 h1 {
@@ -125,58 +114,5 @@ p {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}  border-radius: 12px;
-  background: linear-gradient(to bottom, #333, #111);
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-  transition: all 0.3s ease-in-out;
-  animation: pulse 2s infinite; /* subtle glow loop */
-}
-
-/* Hover glow + scale */
-.btn:hover {
-  background: linear-gradient(to bottom, #444, #222);
-  transform: scale(1.08);
-  box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
-}
-
-/* Press-down click effect */
-.btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.8);
-}
-
-/* Pulse animation */
-@keyframes pulse {
-  0% { box-shadow: 0 0 5px #ff3333; }
-  50% { box-shadow: 0 0 20px #ff3333; }
-  100% { box-shadow: 0 0 5px #ff3333; }
-}
-
-/* Slide-up entrance for buttons */
-.buttons button {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideUp 0.8s forwards;
-  animation-delay: 0.2s;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.6); /* base shadow */
-}
-
-/* Stagger each button slightly */
-.buttons button:nth-child(1) { animation-delay: 0.2s; }
-.buttons button:nth-child(2) { animation-delay: 0.4s; }
-.buttons button:nth-child(3) { animation-delay: 0.6s; }
-.buttons button:nth-child(4) { animation-delay: 0.8s; }
-
-/* Slide-up keyframes with glow restored */
-@keyframes slideUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333; /* red glow */
   }
 }
