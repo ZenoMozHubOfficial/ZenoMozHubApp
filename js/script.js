@@ -1,12 +1,29 @@
+// --- Existing click sound ---
 function playClick() {
   const audio = new Audio('sounds/click.ogg');
   audio.play();
 }
+
+// --- Background music setup ---
+let musicStarted = false;
+const bgMusic = new Audio('sounds/bg-music.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.3; // adjust volume (0.0 - 1.0)
+
+function startMusic() {
+  if (!musicStarted) {
+    bgMusic.play().catch(e => console.log("Autoplay blocked, user needs to interact"));
+    musicStarted = true;
+  }
+}
+
+// --- Attach startMusic to all buttons ---
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', startMusic);
+});
+
+// --- Optional: spin logo on page load ---
 window.addEventListener('load', () => {
-  const music = new Audio('sounds/bg-music.mp3');
-  music.loop = true;
-  music.volume = 0.3;
-  music.play().catch(e => {
-    console.log("Autoplay blocked, user needs to interact with the page first");
-  });
+  const logo = document.querySelector('.logo img');
+  logo.style.animation = 'logoSpin 0.5s ease-out forwards';
 });
