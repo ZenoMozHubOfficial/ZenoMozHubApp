@@ -9,16 +9,6 @@ body {
   overflow-x: hidden;
 }
 
-
-
-/* Responsive tweak for mobile / very tall screens */
-@media (max-width: 768px) {
-  #bg-video {
-    object-fit: cover;
-    object-position: center top;
-  }
-}
-
 /* Logo */
 .logo img {
   margin-top: 20px;
@@ -151,17 +141,4 @@ p {
 .buttons button {
   pointer-events: none;
   opacity: 0.5;
-}
-#bg-video {
-  object-fit: cover;
-  object-position: center top;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  opacity: 0.5;
-  /* hide default play icon */
-  pointer-events: none;
 }
