@@ -9,18 +9,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Video Background */
-#bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;      /* cover the screen */
-  object-position: center top; /* keep top visible on vertical screens */
-  z-index: -1;
-  opacity: 0.5;           /* dim video so buttons pop */
-}
+
 
 /* Responsive tweak for mobile / very tall screens */
 @media (max-width: 768px) {
