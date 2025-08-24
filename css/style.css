@@ -29,12 +29,40 @@ p {
 
 /* Buttons */
 .btn {
-  display: inline-block;
+  display: block;
   width: 250px;
   margin: 15px auto;
   padding: 16px 20px;
   border: none;
   border-radius: 12px;
+  background: linear-gradient(to bottom, #333, #111);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  transition: all 0.3s ease-in-out;
+  animation: pulse 2s infinite; /* subtle glow loop */
+}
+
+.btn:hover {
+  background: linear-gradient(to bottom, #444, #222);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+}
+
+/* Press-down click effect */
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #ff3333; }
+  50% { box-shadow: 0 0 20px #ff3333; }
+  100% { box-shadow: 0 0 5px #ff3333; }
+}  border-radius: 12px;
   background: linear-gradient(to bottom, #333, #111);
   color: #fff;
   font-size: 1.2rem;
