@@ -45,6 +45,7 @@ p {
   animation: pulse 2s infinite; /* subtle glow loop */
 }
 
+/* Hover glow + scale */
 .btn:hover {
   background: linear-gradient(to bottom, #444, #222);
   transform: scale(1.08);
@@ -62,74 +63,15 @@ p {
   0% { box-shadow: 0 0 5px #ff3333; }
   50% { box-shadow: 0 0 20px #ff3333; }
   100% { box-shadow: 0 0 5px #ff3333; }
-}  border-radius: 12px;
-  background: linear-gradient(to bottom, #333, #111);
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-  transition: all 0.3s ease-in-out;
 }
 
-.btn:hover {
-  background: linear-gradient(to bottom, #444, #222);
-  transform: scale(1.07);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.8);
-}  border-radius: 50px;
-  background: linear-gradient(to bottom, #333, #000);
-  color: #fff;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  background: linear-gradient(to bottom, #555, #222);
-  transform: scale(1.05);
-}  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #222;
-  color: #fff;
-  transition: all 0.2s ease-in-out;
-}
-
-button:hover {
-  background-color: #ff3333;
-  transform: scale(1.05);
-}  border-radius: 50px;
-  background: linear-gradient(to bottom, #333, #000);
-  color: #fff;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  background: linear-gradient(to bottom, #555, #222);
-  transform: scale(1.05);
-}  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #222;
-  color: #fff;
-  transition: all 0.2s ease-in-out;
-}
-
-button:hover {
-  background-color: #ff3333;
-  transform: scale(1.05);
-}
 /* Slide-up entrance for buttons */
 .buttons button {
   opacity: 0;
   transform: translateY(30px);
   animation: slideUp 0.8s forwards;
-  animation-delay: 0.2s; /* delay before animation starts */
+  animation-delay: 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6); /* base shadow */
 }
 
 /* Stagger each button slightly */
@@ -138,10 +80,11 @@ button:hover {
 .buttons button:nth-child(3) { animation-delay: 0.6s; }
 .buttons button:nth-child(4) { animation-delay: 0.8s; }
 
-/* Slide-up keyframes */
+/* Slide-up keyframes with glow restored */
 @keyframes slideUp {
   to {
     opacity: 1;
     transform: translateY(0);
+    box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333; /* red glow */
   }
 }
