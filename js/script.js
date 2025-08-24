@@ -6,7 +6,7 @@ function playClick() {
 
 // --- Background music setup ---
 let musicStarted = false;
-const bgMusic = new Audio('sounds/bg-music.mp3');
+const bgMusic = new Audio('sounds/bg-music.mp3'); // correct folder
 bgMusic.loop = true;
 bgMusic.volume = 0.3; // adjust volume (0.0 - 1.0)
 
@@ -22,7 +22,7 @@ document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', startMusic);
 });
 
-// --- Optional: spin logo on page load ---
+// --- Logo spin on page load ---
 window.addEventListener('load', () => {
   const logo = document.querySelector('.logo img');
   logo.style.animation = 'logoSpin 0.5s ease-out forwards';
