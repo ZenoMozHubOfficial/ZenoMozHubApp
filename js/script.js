@@ -9,21 +9,24 @@ const bgMusic = new Audio('sounds/bg-music.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.3;
 
-// --- Tap-to-play setup ---
-let musicStarted = false;
-function startIntro() {
-  if (!musicStarted) {
-    bgMusic.play().catch(e => console.log("Autoplay blocked, please interact"));
-    musicStarted = true;
+// --- Start button logic ---
+const startOverlay = document.getElementById('start-overlay');
+const startBtn = document.getElementById('start-btn');
 
-    // Logo spin on first tap
-    const logo = document.querySelector('.logo img');
-    logo.style.animation = 'logoSpin 0.5s ease-out forwards';
+startBtn.addEventListener('click', () => {
+  // Play background music
+  bgMusic.play().catch(e => console.log("Autoplay blocked"));
 
-    // Remove this event listener after first tap
-    window.removeEventListener('click', startIntro);
-  }
-}
+  // Spin logo
+  const logo = document.querySelector('.logo img');
+  logo.style.animation = 'logoSpin 0.5s ease-out forwards';
 
-// --- Attach to whole window ---
-window.addEventListener('click', startIntro);
+  // Enable buttons
+  document.querySelectorAll('.buttons button').forEach(btn => {
+    btn.style.pointerEvents = 'auto';
+    btn.style.opacity = '1';
+  });
+
+  // Hide overlay
+  startOverlay.style.display = 'none';
+});
