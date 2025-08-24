@@ -1,40 +1,51 @@
-/* Page base */
-body {
-  background-color: #111;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+const stars = [];
+const numStars = 200;
+
+for (let i = 0; i < numStars; i++) {
+  stars.push({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    z: Math.random() * width,
+    size: Math.random() * 1.5,
+  });
 }
 
-/* Video Background */
-#bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;      /* cover the screen */
-  object-position: center top; /* keep top visible on vertical screens */
-  z-index: -1;
-  opacity: 0.5;           /* dim video so buttons pop */
+function animateStars() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "white";
+  stars.forEach(star => {
+    star.z -= 2;
+    if (star.z <= 0) {
+      star.x = Math.random() * width;
+      star.y = Math.random() * height;
+      star.z = width;
+    }
+
+    let sx = (star.x - width / 2) * (width / star.z) + width / 2;
+    let sy = (star.y - height / 2) * (width / star.z) + height / 2;
+    let radius = star.size * (width / star.z);
+    ctx.beginPath();
+    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animateStars);
 }
 
-/* Responsive tweak for mobile / very tall screens */
-@media (max-width: 768px) {
-  #bg-video {
-    object-fit: cover;
-    object-position: center top;
-  }
-}
+animateStars();
 
-/* Logo */
-.logo img {
-  margin-top: 20px;
-  width: 120px;
-}
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});}
 
 /* Title */
 h1 {
