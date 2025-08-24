@@ -91,3 +91,63 @@ particlesJS("particles-js", {
   },
   "retina_detect": true
 });
+<!-- Version text -->
+  <div class="version-text">version: 1.0.1</div>
+
+  <!-- Your particles & main logic -->
+  <script src="js/script.js"></script>
+
+  <!-- Extra start + spinning logo script -->
+  <script>
+    const startOverlay = document.getElementById('start-overlay');
+    const startBtn = document.getElementById('start-btn');
+    const logo = document.querySelector('.logo img');
+
+    // Background music
+    const bgMusic = new Audio('sounds/bg-music.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.3;
+
+    startBtn.addEventListener('click', () => {
+      // Play music
+      bgMusic.play().catch(e => console.log("Autoplay blocked"));
+
+      // Add spinning class
+      logo.classList.add('spin');
+
+      // Show buttons + animate
+      document.querySelectorAll('.buttons button').forEach((btn, index) => {
+        btn.style.pointerEvents = 'auto';
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(30px)';
+
+        setTimeout(() => {
+          btn.style.transition = 'all 0.8s ease-out';
+          btn.style.opacity = '1';
+          btn.style.transform = 'translateY(0)';
+          btn.style.boxShadow = '0 0 20px #ff3333, 0 0 40px #ff3333';
+        }, 150 * (index + 1));
+      });
+
+      // Fade in title & subtitle
+      const title = document.querySelector('h1');
+      const subtitle = document.querySelector('p');
+      title.style.opacity = '0';
+      subtitle.style.opacity = '0';
+      title.style.transform = 'translateY(-20px)';
+      subtitle.style.transform = 'translateY(-20px)';
+      title.style.transition = 'all 1s ease-out';
+      subtitle.style.transition = 'all 1s ease-out';
+      setTimeout(() => {
+        title.style.opacity = '1';
+        title.style.transform = 'translateY(0)';
+        subtitle.style.opacity = '1';
+        subtitle.style.transform = 'translateY(0)';
+      }, 200);
+
+      // Hide overlay
+      startOverlay.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
