@@ -6,6 +6,28 @@ body {
   text-align: center;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+}
+
+/* Video Background */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* cover the screen */
+  object-position: center top; /* keep top visible on vertical screens */
+  z-index: -1;
+  opacity: 0.5;           /* dim video so buttons pop */
+}
+
+/* Responsive tweak for mobile / very tall screens */
+@media (max-width: 768px) {
+  #bg-video {
+    object-fit: cover;
+    object-position: center top;
+  }
 }
 
 /* Logo */
@@ -19,12 +41,18 @@ h1 {
   color: #ff3333;
   font-size: 2.5rem;
   margin: 10px 0;
+  opacity: 0;
+  animation: fadeSlideDown 1s ease forwards;
 }
 
+/* Subtitle */
 p {
   font-size: 1.1rem;
   margin-bottom: 20px;
   color: #ddd;
+  opacity: 0;
+  animation: fadeSlideDown 1s ease forwards;
+  animation-delay: 0.3s;
 }
 
 /* Buttons */
@@ -35,6 +63,59 @@ p {
   padding: 16px 20px;
   border: none;
   border-radius: 12px;
+  background: linear-gradient(to bottom, #333, #111);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  transition: all 0.3s ease-in-out;
+  animation: pulse 2s infinite;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Buttons hover/glow */
+.btn:hover {
+  background: linear-gradient(to bottom, #444, #222);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+}
+
+/* Buttons press-down effect */
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #ff3333; }
+  50% { box-shadow: 0 0 20px #ff3333; }
+  100% { box-shadow: 0 0 5px #ff3333; }
+}
+
+/* Slide-up animation for buttons */
+.buttons button:nth-child(1) { animation: slideUp 0.8s forwards 0.5s; }
+.buttons button:nth-child(2) { animation: slideUp 0.8s forwards 0.7s; }
+.buttons button:nth-child(3) { animation: slideUp 0.8s forwards 0.9s; }
+.buttons button:nth-child(4) { animation: slideUp 0.8s forwards 1.1s; }
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+  }
+}
+
+/* Title fade/slide animation */
+@keyframes fadeSlideDown {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}  border-radius: 12px;
   background: linear-gradient(to bottom, #333, #111);
   color: #fff;
   font-size: 1.2rem;
