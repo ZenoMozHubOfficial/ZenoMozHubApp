@@ -13,6 +13,7 @@ body {
 .logo img {
   margin-top: 20px;
   width: 120px;
+  animation: logoSpin 0.5s ease-out forwards;
 }
 
 /* Title */
@@ -95,15 +96,13 @@ p {
     transform: translateY(0);
   }
 }
+
 /* Logo spin on page load */
 @keyframes logoSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.logo img {
-  animation: logoSpin 0.5s ease-out forwards;
-}
 /* Start Overlay */
 #start-overlay {
   position: fixed;
@@ -141,4 +140,16 @@ p {
 .buttons button {
   pointer-events: none;
   opacity: 0.5;
+}
+
+/* Version text */
+.version-text {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 12px;
+  color: #888;
+  font-family: Arial, sans-serif;
+  opacity: 0.7;
+  pointer-events: none; /* so it doesn’t block clicks */
 }
