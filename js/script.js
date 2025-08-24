@@ -17,26 +17,25 @@ startBtn.addEventListener('click', () => {
   // Play background music
   bgMusic.play().catch(e => console.log("Autoplay blocked"));
 
-  // Spin logo
+  // Spin logo (quick spin at start)
   const logo = document.querySelector('.logo img');
   logo.style.animation = 'logoSpin 0.5s ease-out forwards';
 
-  // Show buttons + re-trigger their slide-up animations
+  // Show buttons + re-trigger animations
   document.querySelectorAll('.buttons button').forEach((btn, index) => {
     btn.style.pointerEvents = 'auto';
-    btn.style.opacity = '0'; // reset opacity
-    btn.style.transform = 'translateY(30px)'; // reset position
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(30px)';
 
-    // trigger slide-up with staggered delay
     setTimeout(() => {
       btn.style.transition = 'all 0.8s ease-out';
       btn.style.opacity = '1';
       btn.style.transform = 'translateY(0)';
       btn.style.boxShadow = '0 0 20px #ff3333, 0 0 40px #ff3333';
-    }, 100 * (index + 1)); // stagger each button
+    }, 100 * (index + 1));
   });
 
-  // Fade in title and subtitle
+  // Fade in title + subtitle
   const title = document.querySelector('h1');
   const subtitle = document.querySelector('p');
   title.style.opacity = '0';
@@ -54,4 +53,41 @@ startBtn.addEventListener('click', () => {
 
   // Hide overlay
   startOverlay.style.display = 'none';
+});
+
+// --- Particles.js config ---
+particlesJS("particles-js", {
+  "particles": {
+    "number": { "value": 80 },
+    "color": { "value": "#ff3333" },
+    "shape": { "type": "circle" },
+    "opacity": { "value": 0.5, "random": true },
+    "size": { "value": 3, "random": true },
+    "line_linked": {
+      "enable": true,
+      "distance": 150,
+      "color": "#ff3333",
+      "opacity": 0.4,
+      "width": 1
+    },
+    "move": {
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "straight": false,
+      "out_mode": "out"
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": { "enable": true, "mode": "repulse" },
+      "onclick": { "enable": true, "mode": "push" }
+    },
+    "modes": {
+      "repulse": { "distance": 100 },
+      "push": { "particles_nb": 4 }
+    }
+  },
+  "retina_detect": true
 });
