@@ -13,7 +13,7 @@ body {
 .logo img {
   margin-top: 20px;
   width: 120px;
-  animation: logoSpin 0.5s ease-out forwards;
+  animation: logoSpin 5s linear infinite; /* calm continuous spin */
 }
 
 /* Title */
@@ -97,7 +97,7 @@ p {
   }
 }
 
-/* Logo spin on page load */
+/* Logo spin smooth */
 @keyframes logoSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
