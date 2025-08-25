@@ -56,11 +56,12 @@ function finishLoading(skip = false) {
       }, 120 * i + 80);
     });
 
-    // Quick logo spin burst
-    const comp = getComputedStyle(logo);
-    const prevDur = comp.animationDuration || '10s';
-    logo.style.animationDuration = '0.6s';
-    setTimeout(() => { logo.style.animationDuration = prevDur; }, 700);
+    // Quick logo burst spin (without breaking normal slow spin)
+    logo.classList.add("logo-burst");
+    setTimeout(() => {
+      logo.classList.remove("logo-burst");
+    }, 700);
+
   }, skip ? 300 : 400);
 }
 
