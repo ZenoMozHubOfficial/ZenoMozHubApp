@@ -1,7 +1,14 @@
 /* Reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body { height: 100%; width: 100%; font-family: Arial, sans-serif; background: #111; color: #fff; }
+html, body { 
+  height: 100%; 
+  width: 100%; 
+  font-family: Arial, sans-serif; 
+  background: #111; 
+  color: #fff; 
+  overflow-x: hidden;
+}
 
 /* Particles background - behind everything */
 #particles-js {
@@ -20,7 +27,10 @@ html, body { height: 100%; width: 100%; font-family: Arial, sans-serif; backgrou
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  transition: opacity 280ms ease;
 }
+#start-overlay.hidden { opacity: 0; pointer-events: none; }
+
 #start-btn {
   padding: 26px 88px;
   font-size: 34px;
@@ -30,11 +40,226 @@ html, body { height: 100%; width: 100%; font-family: Arial, sans-serif; backgrou
   border: none;
   border-radius: 14px;
   cursor: pointer;
-  box-shadow: 0 0 60px #ff3333, 0 0 120px rgba(255,51,51,0.12);
-  transition: transform .25s ease, box-shadow .25s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 0 60px #ff3333, 0 0 120px rgba(255,51,51,0.12);
+  transition: transform .25s ease, box-shadow .25s ease;
 }
+#start-btn:hover { transform: scale(1.08); }
+#start-btn:active { transform: scale(0.97); }
+
+/* Main content container (centered vertically) */
+.container {
+  position: relative;
+  z-index: 5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+/* Logo (calm spin) */
+.logo img {
+  width: 160px;
+  max-width: 30vmax;
+  display: block;
+  margin: 0 auto;
+  animation: logoSpin 10s linear infinite;
+}
+@keyframes logoSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Title */
+h1 {
+  margin-top: 20px;
+  font-size: 44px;
+  color: #ff3333;
+  text-shadow: 0 0 18px rgba(255,51,51,0.25);
+}
+p { margin-top: 8px; color: #d0d0d0; font-size: 16px; }
+
+/* Buttons layout */
+.buttons {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  max-width: 1000px;
+}
+
+/* 🔥 Cyber Dynamic Buttons */
+.btn {
+  min-width: 260px;
+  padding: 14px 22px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(145deg, #222, #111);
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+  transition: all 0.35s ease;
+
+  /* Locked state */
+  opacity: 0.3;
+  transform: translateY(40px) scale(0.9);
+  pointer-events: none;
+}
+
+/* Unlock state (after START pressed) */
+.btn.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  animation: btnFloat 4s ease-in-out infinite, neonPulse 6s ease-in-out infinite;
+}
+
+/* Hover effects */
+.btn:hover {
+  background: linear-gradient(145deg, #333, #111);
+  transform: translateY(-6px) scale(1.08);
+}
+
+/* Pressed state */
+.btn:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 0 6px #ff3333, 0 0 18px rgba(255,51,51,0.25);
+}
+
+/* Shiny sweep effect */
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+.btn:hover::after { left: 140%; }
+
+/* Subtle float animation */
+@keyframes btnFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.02); }
+}
+
+/* Neon pulse glow */
+@keyframes neonPulse {
+  0%   { box-shadow: 0 0 14px #ff3333, 0 0 32px rgba(255,51,51,0.4); }
+  33%  { box-shadow: 0 0 14px #ff66cc, 0 0 32px rgba(255,102,204,0.4); }
+  66%  { box-shadow: 0 0 14px #9933ff, 0 0 32px rgba(153,51,255,0.4); }
+  100% { box-shadow: 0 0 14px #ff3333, 0 0 32px rgba(255,51,51,0.4); }
+}
+
+/* Rumble hover for special buttons */
+@keyframes rumble {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+}
+.btn.rumble:hover { animation: rumble 120ms infinite; }
+
+/* Ripple click effect */
+.btn::before {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.3);
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+.btn:active::before {
+  left: 50%;
+  top: 50%;
+  transform: scale(14);
+  opacity: 1;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+/* Stagger fade-in */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Version text */
+.version-text {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  font-size: 13px;
+  color: #aaa;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 720px) {
+  h1 { font-size: 32px; }
+  .logo img { width: 120px; }
+  .btn { min-width: 72%; font-size: 16px; padding: 12px 18px; }
+}
+
+/* Corner Buttons (top-left) */
+.corner-buttons {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+}
+.corner-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(255,51,51,0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.corner-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.corner-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px #ff3333, 0 0 40px rgba(255,51,51,0.2);
+}
+
+/* Kill blue focus ring + tap highlight */
+button:focus { outline: none; box-shadow: none; }
+button, .corner-btn, .btn, #start-btn {
+  -webkit-appearance: none;
+  appearance: none;
+}
+button:focus, button:focus-visible,
+.corner-btn:focus, .corner-btn:focus-visible,
+.btn:focus, .btn:focus-visible,
+#start-btn:focus, #start-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+button, a { -webkit-tap-highlight-color: transparent; }
+button::-moz-focus-inner { border: 0; }}
 #start-btn:hover { transform: scale(1.08); }
 #start-btn:active { transform: scale(0.97); }
 
