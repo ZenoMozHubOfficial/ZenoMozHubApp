@@ -437,3 +437,49 @@ button:focus, button:focus-visible,
 }
 button, a { -webkit-tap-highlight-color: transparent; }
 button::-moz-focus-inner { border: 0; }
+/* --- Loading Screen --- */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,17,17,0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#loading-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#loading-logo {
+  width: 140px;
+  margin-bottom: 24px;
+  animation: spinLogo 2s linear infinite;
+}
+@keyframes spinLogo {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.loading-bar {
+  width: 60%;
+  max-width: 400px;
+  height: 16px;
+  border-radius: 10px;
+  background: #222;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(255,51,51,0.4);
+}
+.loading-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#ff3333,#ff5555,#ff3333);
+  border-radius: 10px;
+  transition: width 0.25s ease;
+}
