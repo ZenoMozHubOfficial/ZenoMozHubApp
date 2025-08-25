@@ -68,7 +68,17 @@ startBtn.addEventListener('click', () => {
             btn.style.transform = 'translateY(0)';
           }, 120 * i + 80);
         });
+// --- Skip loading screen if user taps/clicks anywhere ---
+const loadingScreen = document.getElementById("loading-screen");
+if (loadingScreen) {
+  loadingScreen.addEventListener("click", () => {
+    finishLoading(true); // same function that ends loading
+  });
 
+  loadingScreen.addEventListener("touchstart", () => {
+    finishLoading(true);
+  });
+}
         // Quick logo spin burst
         const comp = getComputedStyle(logo);
         const prevDur = comp.animationDuration || '10s';
