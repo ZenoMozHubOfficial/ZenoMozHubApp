@@ -511,3 +511,62 @@ window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
 window.zmh.unlockAchievement = unlockAchievement;
+// ================= Quest System =================
+const questIcon = document.getElementById('quest-icon');
+const questPanel = document.getElementById('quest-panel');
+const questClose = document.getElementById('quest-close');
+const questList = document.getElementById('quest-list');
+
+let quests = [
+  {id:'q1', text:'Finish 1 Music', target:1, progress:0, xp:80},
+  {id:'q2', text:'Afk for 30 minutes', target:30, progress:0, xp:1000},
+  {id:'q3', text:'Get the key', target:1, progress:0, xp:10},
+  {id:'q4', text:'Finish the music Darkfinite', target:1, progress:0, xp:5000},
+  {id:'q5', text:'Click 6 musics', target:6, progress:0, xp:60},
+];
+
+const allDoneBonus = 1000;
+
+// Load saved progress
+if(localStorage.getItem('quests')){
+  quests = JSON.parse(localStorage.getItem('quests'));
+}
+
+// Render quests
+function renderQuests(){
+  questList.innerHTML='';
+  quests.forEach(q=>{
+    const div = document.createElement('div');
+    div.className='quest-item';
+    div.id=q.id;
+    div.innerHTML=`
+      <p>${q.text}</p>
+      <div class="quest-progress"><div class="quest-progress-fill" style="width:${Math.floor((q.progress/q.target)*100)}%"></div></div>
+      <button class="quest-claim ${q.progress>=q.target?'active':''}">Claim +${q.xp} XP</button>
+    `;
+    questList.appendChild(div);
+    div.querySelector('.quest-claim').addEventListener('click', ()=>{
+      addXP(q.xp);
+      q.progress=0; // reset
+      saveQuests();
+      renderQuests();
+      checkAllDone();
+    });
+  });
+}
+
+// Save quests
+function saveQuests(){
+  localStorage.setItem('quests', JSON.stringify(quests));
+}
+
+// Toggle quest panel
+questIcon.addEventListener('click', ()=>questPanel.classList.add('active'));
+questClose.addEventListener('click', ()=>questPanel.classList.remove('active'));
+
+// Progress updates
+function updateQuestProgress(id, amount=1){
+  const quest = quests.find(q=>q.id===id);
+  if(!quest) return;
+  quest.progress=Math.min(quest.progress+amount, quest.target);
+  saveQuests
