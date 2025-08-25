@@ -1,24 +1,11 @@
-// --- Click sound with pitch randomizer ---
+// --- Click sound ---
 function playClick() {
   try {
     const audio = new Audio('sounds/click.mp3');
     audio.volume = 0.8;
     audio.playbackRate = 0.9 + Math.random() * 0.25;
     audio.play().catch(() => {});
-  } catch (e) {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.value = 600 + Math.random() * 120;
-      g.gain.value = 0.03;
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start();
-      setTimeout(() => { o.stop(); ctx.close(); }, 90);
-    } catch (err) {}
-  }
+  } catch (e) { /* fallback */ }
 }
 
 // --- Background music ---
@@ -26,6 +13,7 @@ let bgMusic = new Audio('sounds/bg-music1.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.28;
 
+// --- Change music ---
 function changeMusic(src) {
   playClick();
   bgMusic.pause();
@@ -33,6 +21,7 @@ function changeMusic(src) {
   bgMusic.loop = true;
   bgMusic.volume = 0.28;
   bgMusic.play().catch(() => {});
+  if (audioCtx) connectVisualizer(bgMusic);
 }
 
 // --- Elements ---
@@ -43,15 +32,52 @@ const logo = document.querySelector('.logo img');
 const loadingScreen = document.getElementById('loading-screen');
 const loadingFill = document.querySelector('.loading-fill');
 const loadingPercent = document.querySelector('.loading-percent');
+const canvas = document.getElementById('music-visualizer');
+const ctx = canvas.getContext('2d');
 
-// --- Finish loading function ---
-function finishLoading(skip=false) {
+// --- Music Visualizer ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+let source;
+
+function connectVisualizer(audio) {
+  if (source) source.disconnect();
+  source = audioCtx.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 128;
+  renderFrame();
+}
+
+function renderFrame() {
+  requestAnimationFrame(renderFrame);
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  analyser.getByteFrequencyData(dataArray);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const barWidth = (canvas.width / bufferLength) * 2.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    ctx.fillStyle = `rgb(255,50,50)`;
+    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
+  }
+}
+
+// --- Finish loading ---
+function finishLoading(skip = false) {
   clearInterval(window.loadingInterval);
   loadingFill.style.width = "100%";
   loadingPercent.textContent = "100%";
+
   setTimeout(() => {
     loadingScreen.classList.remove('active');
     bgMusic.play().catch(() => {});
+    
+    // Animate buttons
     btns.forEach((btn, i) => {
       setTimeout(() => {
         btn.style.pointerEvents = 'auto';
@@ -59,14 +85,14 @@ function finishLoading(skip=false) {
         btn.style.transform = 'translateY(0)';
       }, 120 * i + 80);
     });
-    const comp = getComputedStyle(logo);
-    const prevDur = comp.animationDuration || '10s';
+
+    // Logo burst spin
     logo.style.animationDuration = '0.6s';
-    setTimeout(() => { logo.style.animationDuration = prevDur; }, 700);
+    setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
   }, skip ? 0 : 400);
 }
 
-// --- Run Button Logic ---
+// --- Run button click ---
 startBtn.addEventListener('click', () => {
   playClick();
   startOverlay.classList.add('hidden');
@@ -88,11 +114,12 @@ startBtn.addEventListener('click', () => {
   }, 300);
 });
 
-// --- Skip loading screen on tap/click ---
-loadingScreen.addEventListener("click", () => finishLoading(true));
-loadingScreen.addEventListener("touchstart", () => finishLoading(true));
+// --- Tap/click anywhere to skip loading ---
+loadingScreen.addEventListener("click", () => { finishLoading(true); });
+loadingScreen.addEventListener("touchstart", () => { finishLoading(true); });
 
-// --- particles.js safe init ---
-if (typeof particlesJS === 'function') {
-  // config already in index.html
-}
+// --- Connect visualizer when music starts ---
+bgMusic.addEventListener('play', () => {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  connectVisualizer(bgMusic);
+});
