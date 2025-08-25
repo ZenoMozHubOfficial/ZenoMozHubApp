@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZenoMoz Hub</title>
   <link rel="stylesheet" href="css/style.css"/>
-  <!-- Particles.js library -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
@@ -28,18 +27,14 @@
     <p class="loading-text">Initializing ZenoMoz Hub...</p>
   </div>
 
-  <!-- Main content container -->
+  <!-- Main Content -->
   <div class="container">
-    <!-- Logo -->
     <div class="logo">
       <img src="images/logo.png" alt="ZenoMoz Hub Logo" />
     </div>
-
-    <!-- Title -->
     <h1>ZenoMoz Hub</h1>
     <p>⚡ A Hub with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
 
-    <!-- Buttons -->
     <div class="buttons">
       <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
       <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
@@ -57,12 +52,13 @@
     </div>
   </div>
 
-  <!-- Version text -->
+  <!-- Music Visualizer -->
+  <canvas id="music-visualizer" width="1200" height="100"></canvas>
+
   <div class="version-text">version: 1.0.1</div>
 
   <script src="js/script.js"></script>
 
-  <!-- Particles config -->
   <script>
     particlesJS("particles-js", {
       "particles": {
@@ -71,18 +67,10 @@
         "shape": { "type": "circle" },
         "opacity": { "value": 0.5, "random": true },
         "size": { "value": 3, "random": true },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#ff3333",
-          "opacity": 0.4,
-          "width": 1
-        },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
         "move": { "enable": true, "speed": 1.6 }
       },
-      "interactivity": {
-        "events": { "onhover": { "enable": true, "mode": "repulse" } }
-      },
+      "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
       "retina_detect": true
     });
   </script>
