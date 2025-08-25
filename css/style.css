@@ -208,7 +208,8 @@ p { margin-top: 8px; color: #d0d0d0; font-size: 16px; }
 #music-visualizer {
   width: 100%; height:80px; position:fixed; bottom:0; left:0;
   z-index:4; pointer-events:none;
-                   }
+}
+
 /* Special glow for ChangeLogs button */
 .btn.changelog-btn {
   background: linear-gradient(145deg, #111, #222);
