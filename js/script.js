@@ -195,3 +195,72 @@ btns.forEach(btn => {
 
 // --- Particles.js safe init ---
 if (typeof particlesJS === 'function') {}
+// ======================
+// XP + Level System
+// ======================
+
+// Load saved values or defaults
+let xp = parseInt(localStorage.getItem("xp")) || 0;
+let level = parseInt(localStorage.getItem("level")) || 1;
+const maxLevel = 10000;
+
+// --- DOM Elements (from the HUD we added in HTML) ---
+const levelDisplay = document.getElementById("level-display");
+const xpFill = document.getElementById("xp-fill");
+const xpText = document.getElementById("xp-text");
+
+// --- XP Formula ---
+function xpNeededForLevel(lvl) {
+  // basic formula: 100 + (lvl-1)*20
+  return 100 + (lvl - 1) * 20;
+}
+
+// --- Save Progress ---
+function saveProgress() {
+  localStorage.setItem("xp", xp);
+  localStorage.setItem("level", level);
+}
+
+// --- Update HUD ---
+function updateHUD() {
+  let needed = xpNeededForLevel(level);
+  if (xp >= needed) {
+    xp -= needed;
+    level++;
+    if (level > maxLevel) level = maxLevel;
+  }
+
+  let percent = Math.min((xp / xpNeededForLevel(level)) * 100, 100);
+  xpFill.style.width = percent + "%";
+
+  levelDisplay.textContent = level;
+  xpText.textContent = `${xp} / ${xpNeededForLevel(level)} XP`;
+
+  saveProgress();
+}
+
+// --- Add XP ---
+function addXP(amount) {
+  xp += amount;
+  updateHUD();
+}
+
+// --- Idle XP (1 per second) ---
+setInterval(() => {
+  addXP(1);
+}, 1000);
+
+// --- Example Button Rewards ---
+// Social media buttons = +100 XP
+document.querySelectorAll(".btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    let reward = 5; // default click XP
+    if (btn.classList.contains("discord")) reward = 100;
+    if (btn.classList.contains("youtube")) reward = 100;
+    if (btn.classList.contains("twitter")) reward = 100;
+    addXP(reward);
+  });
+});
+
+// --- Init ---
+updateHUD();
