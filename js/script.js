@@ -5,7 +5,7 @@ function playClick() {
     audio.volume = 0.8;
     audio.playbackRate = 0.9 + Math.random() * 0.25;
     audio.play().catch(() => {});
-  } catch (e) { /* fallback */ }
+  } catch (e) {}
 }
 
 // --- Background music ---
@@ -39,7 +39,7 @@ const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = 80; // visualizer height
+  canvas.height = 80;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
@@ -75,19 +75,84 @@ function renderFrame() {
   }
 }
 
+// --- Loading logic ---
+let loadingProgress = 0;
+let loadingInterval;
+
+function startLoading() {
+  loadingScreen.classList.add('active');
+  loadingProgress = 0;
+  loadingInterval = setInterval(() => {
+    loadingProgress += Math.random() * 18;
+    if (loadingProgress >= 100) loadingProgress = 100;
+    loadingFill.style.width = loadingProgress + "%";
+    loadingPercent.textContent = Math.floor(loadingProgress) + "%";
+    if (loadingProgress >= 100) finishLoading();
+  }, 300);
+}
+
 // --- Finish loading ---
-function finishLoading(skip = false) {
-  clearInterval(window.loadingInterval);
+function finishLoading() {
+  clearInterval(loadingInterval);
   loadingFill.style.width = "100%";
   loadingPercent.textContent = "100%";
 
   setTimeout(() => {
     loadingScreen.classList.remove('active');
-    bgMusic.play().catch(() => {});
 
-    // Animate buttons with stagger
+    // Play bg music
+    bgMusic.play().catch(() => {});
+    connectVisualizer(bgMusic);
+
+    // Animate buttons in
     btns.forEach((btn, i) => {
       setTimeout(() => {
-        btn.style.pointerEvents = 'auto';
-        btn.style.opacity = '1';
-        btn.style.transform = 'translateY(0) scale(1)'; // ensure
+        btn.classList.add('active');
+      }, i * 120);
+    });
+
+    // Logo burst spin
+    logo.style.animationDuration = '0.6s';
+    setTimeout(() => {
+      logo.style.animationDuration = '10s';
+    }, 700);
+  }, 400);
+}
+
+// --- Start button ---
+startBtn.addEventListener('click', () => {
+  playClick();
+  startOverlay.classList.add('hidden');
+  setTimeout(() => { startOverlay.style.display = 'none'; }, 400);
+  startLoading();
+});
+
+// --- Skip loading on tap ---
+loadingScreen.addEventListener('click', finishLoading);
+loadingScreen.addEventListener('touchstart', finishLoading);
+
+// --- Buttons hold/tap zoom effect ---
+btns.forEach(btn => {
+  let zoomInterval;
+  const startZoom = () => {
+    let scale = 1;
+    zoomInterval = setInterval(() => {
+      if (scale < 1.15) scale += 0.01;
+      const current = btn.style.transform.replace(/scale\([^)]+\)/, '').trim();
+      btn.style.transform = `${current} scale(${scale})`;
+    }, 16);
+  };
+  const stopZoom = () => {
+    clearInterval(zoomInterval);
+    const current = btn.style.transform.replace(/scale\([^)]+\)/, '').trim();
+    btn.style.transform = `${current} scale(1)`;
+  };
+  btn.addEventListener('mousedown', startZoom);
+  btn.addEventListener('mouseup', stopZoom);
+  btn.addEventListener('mouseleave', stopZoom);
+  btn.addEventListener('touchstart', startZoom);
+  btn.addEventListener('touchend', stopZoom);
+});
+
+// --- particles.js safe init ---
+if (typeof particlesJS === 'function') {}
