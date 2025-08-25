@@ -209,3 +209,16 @@ p { margin-top: 8px; color: #d0d0d0; font-size: 16px; }
   width: 100%; height:80px; position:fixed; bottom:0; left:0;
   z-index:4; pointer-events:none;
                    }
+/* Special glow for ChangeLogs button */
+.btn.changelog-btn {
+  background: linear-gradient(145deg, #111, #222);
+  color: #ffcc33;
+  box-shadow: 0 0 12px #ffcc33, 0 0 32px rgba(255,204,51,0.4);
+  transition: all 0.35s ease;
+}
+
+.btn.changelog-btn:hover {
+  background: linear-gradient(145deg, #222, #111);
+  box-shadow: 0 0 18px #ffcc33, 0 0 42px rgba(255,204,51,0.5);
+  transform: translateY(-4px) scale(1.06);
+}
