@@ -1,98 +1,85 @@
-// ==========================
-// script.js (ZenoMoz Hub)
-// ==========================
-
-// --- Click sound (tries local file, fallback to web-audio beep) ---
+// --- Click sound with pitch randomizer ---
 function playClick() {
   try {
     const audio = new Audio('sounds/click.mp3');
     audio.volume = 0.8;
-    audio.play().catch(() => { /* ignore autoplay block */ });
+    // Random pitch shift
+    audio.playbackRate = 0.9 + Math.random() * 0.25; 
+    audio.play().catch(() => {});
   } catch (e) {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = 'sine';
-      o.frequency.value = 650;
+      o.frequency.value = 600 + Math.random() * 120; // random pitch
       g.gain.value = 0.03;
       o.connect(g);
       g.connect(ctx.destination);
       o.start();
-      setTimeout(() => { o.stop(); ctx.close(); }, 80);
-    } catch (err) { /* ignore fallback fail */ }
+      setTimeout(() => { o.stop(); ctx.close(); }, 90);
+    } catch (err) {}
   }
 }
 
 // --- Background music ---
-let bgMusic;
-try {
-  bgMusic = new Audio('sounds/bg-music.mp3');
-  bgMusic.loop = true;
-  bgMusic.volume = 0.28;
-} catch (err) {
-  console.warn("Background music failed to load:", err);
-}
+const bgMusic = new Audio('sounds/bg-music.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.28;
 
-// ==========================
-// MAIN APP LOGIC
-// ==========================
+// --- Elements ---
+const startOverlay = document.getElementById('start-overlay');
+const startBtn = document.getElementById('start-btn');
+const btns = document.querySelectorAll('.buttons .btn');
+const logo = document.querySelector('.logo img');
+const loadingScreen = document.getElementById('loading-screen');
+const loadingFill = document.querySelector('.loading-fill');
 
-document.addEventListener("DOMContentLoaded", () => {
-  const startOverlay = document.getElementById('start-overlay');
-  const startBtn = document.getElementById('start-btn');
-  const btns = document.querySelectorAll('.buttons .btn');
-  const logo = document.querySelector('.logo img');
+// --- Run Button Logic ---
+startBtn.addEventListener('click', () => {
+  playClick();
 
-  if (!startBtn || !startOverlay) {
-    console.error("Start button or overlay not found!");
-    return;
-  }
+  // Show loading screen
+  startOverlay.classList.add('hidden');
+  setTimeout(() => { startOverlay.style.display = 'none'; }, 360);
 
-  // --- Start button click ---
-  startBtn.addEventListener('click', () => {
-    playClick();
+  loadingScreen.classList.add('active');
 
-    // Try play music (user interaction should allow it)
-    if (bgMusic) {
-      bgMusic.play().catch(() => { /* ignored if blocked */ });
-    }
+  // Animate fake loading progress
+  let progress = 0;
+  const loadingInterval = setInterval(() => {
+    progress += Math.random() * 18; // random speed chunks
+    if (progress >= 100) progress = 100;
+    loadingFill.style.width = progress + "%";
 
-    // Enable and animate buttons with staggered reveal
-    btns.forEach((btn, i) => {
+    if (progress >= 100) {
+      clearInterval(loadingInterval);
       setTimeout(() => {
-        btn.style.pointerEvents = 'auto';
-        btn.style.opacity = '1';
-        btn.style.transform = 'translateY(0)';
-      }, 110 * i + 60);
-    });
+        loadingScreen.classList.remove('active');
 
-    // Visually hide overlay
-    startOverlay.classList.add('hidden');
-    setTimeout(() => { startOverlay.style.display = 'none'; }, 360);
+        // Start background music
+        bgMusic.play().catch(() => {});
 
-    // Logo "speed burst" spin
-    const prevDur = getComputedStyle(logo).animationDuration || '10s';
-    logo.style.animationDuration = '0.6s';
-    setTimeout(() => { logo.style.animationDuration = prevDur; }, 700);
-  });
+        // Enable & animate buttons
+        btns.forEach((btn, i) => {
+          setTimeout(() => {
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+          }, 120 * i + 80);
+        });
 
-  // --- Extra: Button ripple effect ---
-  btns.forEach(btn => {
-    btn.addEventListener('click', e => {
-      const ripple = document.createElement("span");
-      ripple.className = "ripple";
-      ripple.style.left = e.offsetX + "px";
-      ripple.style.top = e.offsetY + "px";
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
-    });
-  });
-
-  console.log("✅ ZenoMoz Hub initialized");
+        // Quick logo spin burst
+        const comp = getComputedStyle(logo);
+        const prevDur = comp.animationDuration || '10s';
+        logo.style.animationDuration = '0.6s';
+        setTimeout(() => { logo.style.animationDuration = prevDur; }, 700);
+      }, 400);
+    }
+  }, 300);
 });
 
-// --- particles.js safeguard (in case config missing inline) ---
-if (typeof particlesJS === "function") {
-  // Safe no-op: config already in index.html
+// --- particles.js safe init ---
+if (typeof particlesJS === 'function') {
+  // config already in index.html
 }
