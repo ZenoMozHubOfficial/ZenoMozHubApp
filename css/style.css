@@ -157,3 +157,33 @@ button:focus {
   outline: none;
   box-shadow: none;
 }
+/* Kill blue focus ring + tap highlight on all your buttons */
+button,
+.corner-btn,
+.btn,
+#start-btn {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button:focus,
+button:focus-visible,
+.corner-btn:focus,
+.corner-btn:focus-visible,
+.btn:focus,
+.btn:focus-visible,
+#start-btn:focus,
+#start-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important; /* overrides your hover shadows when focused */
+}
+
+/* Mobile Safari/Chrome tap flash */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Firefox inner focus border */
+button::-moz-focus-inner {
+  border: 0;
+}
