@@ -238,3 +238,19 @@ p { margin-top: 8px; color: #d0d0d0; font-size: 14px; }
   #start-btn { padding: 18px 36px; font-size: 22px; }
   .btn { min-width: 180px; font-size: 14px; }
 }
+/* Remove blue click/hold outline */
+button, .btn {
+  outline: none !important;
+}
+button:focus, .btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+button:active, .btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+/* Kill mobile tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
