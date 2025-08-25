@@ -1,19 +1,3 @@
-<!-- Loading Screen -->
-<div id="loading-screen">
-  <img id="loading-logo" src="images/logo.png" alt="Loading Logo">
-  <div class="loading-bar">
-    <div class="loading-fill"></div>
-  </div>
-</div>
-<!-- Corner Buttons -->
-<div class="corner-buttons">
-  <button class="corner-btn" onclick="window.open('https://www.youtube.com/@ZenoMozHubOfficial', '_blank')">
-    <img src="images/youtube.png" alt="YouTube">
-  </button>
-  <button class="corner-btn" onclick="window.open('https://discord.gg/uzdBtY2BYf', '_blank')">
-    <img src="images/discord.png" alt="Discord">
-  </button>
-</div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,6 +18,16 @@
     <button id="start-btn">Run</button>
   </div>
 
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <img src="images/logo.png" alt="Loading Logo" class="loading-logo" />
+    <div class="loading-bar">
+      <div class="loading-fill"></div>
+      <div class="loading-percent">0%</div>
+    </div>
+    <p class="loading-text">Initializing ZenoMoz Hub...</p>
+  </div>
+
   <!-- Main content container -->
   <div class="container">
     <!-- Logo -->
@@ -43,22 +37,23 @@
 
     <!-- Title -->
     <h1>ZenoMoz Hub</h1>
-    <p>⚡ A Hub with with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
+    <p>⚡ A Hub with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
 
-    <!-- Buttons (your real ones) -->
+    <!-- Buttons -->
     <div class="buttons">
-      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">
-        🔑 Get Key
-      </button>
-      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">
-        🧰 ToolBox
-      </button>
-      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">
-        📜 Get Scripts
-      </button>
-      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">
-        🎓 Guide
-      </button>
+      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
+      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
+      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
+      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
+    </div>
+
+    <!-- Music Selector -->
+    <div class="music-selector">
+      <p>🎵 Select Background Music:</p>
+      <button onclick="changeMusic('sounds/bg-music1.mp3')">Track 1</button>
+      <button onclick="changeMusic('sounds/bg-music2.mp3')">Track 2</button>
+      <button onclick="changeMusic('sounds/bg-music3.mp3')">Track 3</button>
+      <button onclick="changeMusic('sounds/bg-music4.mp3')">Track 4</button>
     </div>
   </div>
 
@@ -67,7 +62,7 @@
 
   <script src="js/script.js"></script>
 
-  <!-- Particles config (keeps everything self-contained) -->
+  <!-- Particles config -->
   <script>
     particlesJS("particles-js", {
       "particles": {
@@ -83,24 +78,10 @@
           "opacity": 0.4,
           "width": 1
         },
-        "move": {
-          "enable": true,
-          "speed": 1.6,
-          "direction": "none",
-          "straight": false,
-          "out_mode": "out"
-        }
+        "move": { "enable": true, "speed": 1.6 }
       },
       "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": { "enable": true, "mode": "repulse" },
-          "onclick": { "enable": true, "mode": "push" }
-        },
-        "modes": {
-          "repulse": { "distance": 100 },
-          "push": { "particles_nb": 4 }
-        }
+        "events": { "onhover": { "enable": true, "mode": "repulse" } }
       },
       "retina_detect": true
     });
