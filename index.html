@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>ZenoMoz Hub</title>
   <link rel="stylesheet" href="css/style.css"/>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="theme-neon">
 
-  <!-- Level HUD (top-left) -->
+  <!-- Offline Banner -->
+  <div id="offline-banner" aria-hidden="true">⚠️ Offline — some features may be unavailable</div>
+
+  <!-- Level HUD -->
   <div id="level-hud" aria-hidden="false">
     <div id="level-label">LVL <span id="level-display">1</span></div>
     <div id="xp-bar"><div id="xp-fill"></div></div>
     <div id="xp-text">0 / 100 XP</div>
   </div>
 
-  <!-- Particles Background -->
+  <!-- Particles -->
   <div id="particles-js"></div>
 
   <!-- Start Overlay -->
@@ -37,48 +40,98 @@
 
   <!-- Main Content -->
   <div class="container">
+    <div class="top-controls">
+      <div class="search-wrap">
+        <input id="search-input" placeholder="Search scripts / links..." />
+      </div>
+
+      <div class="toggles">
+        <select id="bg-mode" title="Background mode">
+          <option value="neon">Neon Red</option>
+          <option value="space">Space Blue</option>
+          <option value="matrix">Matrix Green</option>
+        </select>
+
+        <label class="switch">
+          <input id="theme-toggle" type="checkbox" />
+          <span class="slider"></span>
+          <small>Dark / Neon</small>
+        </label>
+
+        <div class="volume-control">
+          <input id="volume-slider" type="range" min="0" max="1" step="0.01" />
+        </div>
+      </div>
+    </div>
+
     <div class="logo">
       <img src="images/logo.png" alt="ZenoMoz Hub Logo" />
     </div>
-    <h1>ZenoMoz Hub</h1>
-    <p>⚡ A Hub with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
 
-    <div class="buttons">
-      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
-      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
-      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
-      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
-      <button class="btn changelog-btn" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
+    <h1>ZenoMoz Hub</h1>
+    <p class="subtitle">⚡ Hub with scripts & executors for free — By SkyeMozScriptz ⚡</p>
+
+    <div class="controls-row">
+      <div class="buttons" id="links-list">
+        <button class="btn" data-title="Get Key" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
+        <button class="btn" data-title="ToolBox" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
+        <button class="btn" data-title="Get Scripts" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
+        <button class="btn" data-title="Guide" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
+        <button class="btn changelog-btn" data-title="ChangeLogs" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
+      </div>
+
+      <div class="achievements-preview" id="achievements-preview">
+        <strong>Achievements</strong>
+        <ul id="ach-list"></ul>
+      </div>
     </div>
 
-    <!-- Music Selector -->
-    <div class="music-selector">
+    <!-- Music Selector (14 tracks) -->
+    <div class="music-selector" id="music-selector">
       <p>🎵 Select Background Music:</p>
-      <button onclick="changeMusic('sounds/bg-music1.mp3')">Heaviness</button>
-      <button onclick="changeMusic('sounds/bg-music2.mp3')">The Heist</button>
-      <button onclick="changeMusic('sounds/bg-music3.mp3')">Back to me</button>
-      <button onclick="changeMusic('sounds/bg-music4.mp3')">Reborn</button>
-      <button onclick="changeMusic('sounds/bg-music5.mp3')">Afterlife</button>
-      <button onclick="changeMusic('sounds/bg-music6.mp3')">Neon Dreams</button>
-      <button onclick="changeMusic('sounds/bg-music7.mp3')">Dark Horizon</button>
-      <button onclick="changeMusic('sounds/bg-music8.mp3')">Eclipse</button>
-      <button onclick="changeMusic('sounds/bg-music9.mp3')">Cyber Rush</button>
-      <button onclick="changeMusic('sounds/bg-music10.mp3')">Void Walker</button>
-      <button onclick="changeMusic('sounds/bg-music11.mp3')">Phoenix</button>
-      <button onclick="changeMusic('sounds/bg-music12.mp3')">Overdrive</button>
-      <button onclick="changeMusic('sounds/bg-music13.mp3')">Glitchstorm</button>
-      <button onclick="changeMusic('sounds/bg-music14.mp3')">Silent Core</button>
+      <div class="music-grid">
+        <button onclick="changeMusic('sounds/bg-music1.mp3')">Heaviness</button>
+        <button onclick="changeMusic('sounds/bg-music2.mp3')">The Heist</button>
+        <button onclick="changeMusic('sounds/bg-music3.mp3')">Back to me</button>
+        <button onclick="changeMusic('sounds/bg-music4.mp3')">Reborn</button>
+        <button onclick="changeMusic('sounds/bg-music5.mp3')">Afterlife</button>
+        <button onclick="changeMusic('sounds/bg-music6.mp3')">Neon Dreams</button>
+        <button onclick="changeMusic('sounds/bg-music7.mp3')">Dark Horizon</button>
+        <button onclick="changeMusic('sounds/bg-music8.mp3')">Eclipse</button>
+        <button onclick="changeMusic('sounds/bg-music9.mp3')">Cyber Rush</button>
+        <button onclick="changeMusic('sounds/bg-music10.mp3')">Void Walker</button>
+        <button onclick="changeMusic('sounds/bg-music11.mp3')">Phoenix</button>
+        <button onclick="changeMusic('sounds/bg-music12.mp3')">Overdrive</button>
+        <button onclick="changeMusic('sounds/bg-music13.mp3')">Glitchstorm</button>
+        <button onclick="changeMusic('sounds/bg-music14.mp3')">Silent Core</button>
+      </div>
     </div>
   </div>
 
   <!-- Music Visualizer -->
-  <canvas id="music-visualizer" width="1200" height="100"></canvas>
+  <canvas id="music-visualizer" width="1200" height="120"></canvas>
+
+  <!-- Achievements popup container -->
+  <div id="achievement-toast" aria-live="polite"></div>
+
+  <!-- AI Assistant -->
+  <div id="ai-assistant" title="AI Assistant">
+    <div id="ai-avatar">🤖</div>
+    <div id="ai-bubble" class="hidden">
+      <div id="ai-text">Hello, SkyeMoz! Ready to jam?</div>
+      <div class="ai-actions">
+        <button id="ai-read">Read changelog</button>
+        <button id="ai-close">Close</button>
+      </div>
+    </div>
+  </div>
 
   <div class="version-text">version: 1.0.1</div>
 
   <script src="js/script.js"></script>
 
   <script>
+    // initial particles config (will be updated by JS)
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 200 },
