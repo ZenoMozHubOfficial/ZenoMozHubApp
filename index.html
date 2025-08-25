@@ -60,6 +60,71 @@
 
   <script src="js/script.js"></script>
 
+  <!-- Particles config (keeps everything self-contained) -->
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 640 },
+        "color": { "value": "#ff3333" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ff3333",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.6,
+          "direction": "none",
+          "straight": false,
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": true, "mode": "repulse" },
+          "onclick": { "enable": true, "mode": "push" }
+        },
+        "modes": {
+          "repulse": { "distance": 100 },
+          "push": { "particles_nb": 4 }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+</html>    <!-- Title -->
+    <h1>ZenoMoz Hub</h1>
+    <p>⚡ A Hub with with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
+
+    <!-- Buttons (your real ones) -->
+    <div class="buttons">
+      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">
+        🔑 Get Key
+      </button>
+      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">
+        🧰 ToolBox
+      </button>
+      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">
+        📜 Get Scripts
+      </button>
+      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">
+        🎓 Guide
+      </button>
+    </div>
+  </div>
+
+  <!-- Version text -->
+  <div class="version-text">version: 1.0.1</div>
+
+  <script src="js/script.js"></script>
+
   <!-- Particles config -->
   <script>
     particlesJS("particles-js", {
