@@ -1,7 +1,7 @@
 // --- Click sound (tries local file, fallback to web-audio beep) ---
 function playClick() {
   try {
-    const audio = new Audio('sounds/click.ogg');
+    const audio = new Audio('sounds/click.mp3');
     audio.volume = 0.8;
     audio.play().catch(() => {
       // ignore autoplay block
