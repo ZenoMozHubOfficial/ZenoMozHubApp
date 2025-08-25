@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZenoMoz Hub</title>
   <link rel="stylesheet" href="css/style.css"/>
+  
+  <!-- Particles.js -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Three.js + Vanta -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
 </head>
 <body>
 
-  <!-- Particles Background -->
+  <!-- Particles.js Background -->
   <div id="particles-js"></div>
 
   <!-- Start Overlay -->
@@ -36,13 +40,15 @@
     <h1>ZenoMoz Hub</h1>
     <p>⚡ A Hub with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
 
-    <div class="buttons">
-      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
-      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
-      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
-      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
-      <!-- ✅ New ChangeLogs Button -->
-      <button class="btn changelog-btn" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
+    <!-- Vanta wrapper for Dots -->
+    <div class="vanta-wrapper" id="vanta-section">
+      <div class="buttons">
+        <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
+        <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
+        <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
+        <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
+        <button class="btn changelog-btn" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
+      </div>
     </div>
 
     <!-- Music Selector -->
@@ -62,6 +68,7 @@
 
   <script src="js/script.js"></script>
 
+  <!-- Initialize Particles.js -->
   <script>
     particlesJS("particles-js", {
       "particles": {
@@ -75,6 +82,25 @@
       },
       "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
       "retina_detect": true
+    });
+  </script>
+
+  <!-- Initialize Vanta Dots -->
+  <script>
+    let vantaEffect = VANTA.DOTS({
+      el: "#vanta-section",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 300,
+      minWidth: 300,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color: 0xff0000,
+      color2: 0xff5555,
+      size: 2.5,
+      spacing: 20,
+      showLines: false
     });
   </script>
 </body>
