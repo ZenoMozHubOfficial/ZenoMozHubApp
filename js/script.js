@@ -24,7 +24,7 @@ function changeMusic(src) {
   if (audioCtx) connectVisualizer(bgMusic);
 }
 
-// --- Elements ---
+// --- DOM elements ---
 const startOverlay = document.getElementById('start-overlay');
 const startBtn = document.getElementById('start-btn');
 const btns = document.querySelectorAll('.buttons .btn');
@@ -33,7 +33,7 @@ const loadingScreen = document.getElementById('loading-screen');
 const loadingFill = document.querySelector('.loading-fill');
 const loadingPercent = document.querySelector('.loading-percent');
 
-// --- Music Visualizer ---
+// --- Music visualizer ---
 const canvas = document.getElementById('music-visualizer');
 const ctx = canvas.getContext('2d');
 
@@ -54,11 +54,11 @@ function connectVisualizer(audio) {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
   analyser.fftSize = 128;
-  renderFrame();
+  renderVisualizer();
 }
 
-function renderFrame() {
-  requestAnimationFrame(renderFrame);
+function renderVisualizer() {
+  requestAnimationFrame(renderVisualizer);
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
   analyser.getByteFrequencyData(dataArray);
@@ -75,23 +75,25 @@ function renderFrame() {
   }
 }
 
-// --- Loading logic ---
+// --- Loading screen ---
 let loadingProgress = 0;
 let loadingInterval;
 
 function startLoading() {
   loadingScreen.classList.add('active');
   loadingProgress = 0;
+  loadingFill.style.width = '0%';
+  loadingPercent.textContent = '0%';
+
   loadingInterval = setInterval(() => {
     loadingProgress += Math.random() * 18;
     if (loadingProgress >= 100) loadingProgress = 100;
     loadingFill.style.width = loadingProgress + "%";
     loadingPercent.textContent = Math.floor(loadingProgress) + "%";
     if (loadingProgress >= 100) finishLoading();
-  }, 300);
+  }, 200);
 }
 
-// --- Finish loading ---
 function finishLoading() {
   clearInterval(loadingInterval);
   loadingFill.style.width = "100%";
@@ -100,22 +102,22 @@ function finishLoading() {
   setTimeout(() => {
     loadingScreen.classList.remove('active');
 
-    // Play bg music
+    // Play bg music on first interaction
     bgMusic.play().catch(() => {});
+
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
     connectVisualizer(bgMusic);
 
-    // Animate buttons in
+    // Animate buttons with stagger using CSS classes
     btns.forEach((btn, i) => {
-      setTimeout(() => {
-        btn.classList.add('active');
-      }, i * 120);
+      setTimeout(() => btn.classList.add('active'), i * 120);
     });
 
     // Logo burst spin
     logo.style.animationDuration = '0.6s';
-    setTimeout(() => {
-      logo.style.animationDuration = '10s';
-    }, 700);
+    setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
   }, 400);
 }
 
@@ -123,35 +125,21 @@ function finishLoading() {
 startBtn.addEventListener('click', () => {
   playClick();
   startOverlay.classList.add('hidden');
-  setTimeout(() => { startOverlay.style.display = 'none'; }, 400);
+  setTimeout(() => startOverlay.style.display = 'none', 400);
   startLoading();
 });
 
-// --- Skip loading on tap ---
+// --- Skip loading on tap/click ---
 loadingScreen.addEventListener('click', finishLoading);
 loadingScreen.addEventListener('touchstart', finishLoading);
 
-// --- Buttons hold/tap zoom effect ---
+// --- Buttons hold/tap scale effect ---
 btns.forEach(btn => {
-  let zoomInterval;
-  const startZoom = () => {
-    let scale = 1;
-    zoomInterval = setInterval(() => {
-      if (scale < 1.15) scale += 0.01;
-      const current = btn.style.transform.replace(/scale\([^)]+\)/, '').trim();
-      btn.style.transform = `${current} scale(${scale})`;
-    }, 16);
-  };
-  const stopZoom = () => {
-    clearInterval(zoomInterval);
-    const current = btn.style.transform.replace(/scale\([^)]+\)/, '').trim();
-    btn.style.transform = `${current} scale(1)`;
-  };
-  btn.addEventListener('mousedown', startZoom);
-  btn.addEventListener('mouseup', stopZoom);
-  btn.addEventListener('mouseleave', stopZoom);
-  btn.addEventListener('touchstart', startZoom);
-  btn.addEventListener('touchend', stopZoom);
+  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(1.12)');
+  btn.addEventListener('mouseup', () => btn.style.transform = 'scale(1)');
+  btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
+  btn.addEventListener('touchstart', () => btn.style.transform = 'scale(1.12)');
+  btn.addEventListener('touchend', () => btn.style.transform = 'scale(1)');
 });
 
 // --- particles.js safe init ---
