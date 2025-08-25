@@ -88,3 +88,113 @@ h1{margin-top:20px;font-size:36px;color:var(--accent1);text-shadow:0 0 14px rgba
 /* Responsive */
 @media(max-width:900px){.top-controls{position:static;transform:none;margin-bottom:12px;}.controls-row{flex-direction:column-reverse;align-items:center}}
 @media(max-width:420px){#level-hud{left:8px;top:8px;width:170px;padding:8px}#start-btn{padding:14px 28px;font-size:20px}.btn{min-width:160px;font-size:14px}}
+/* Quest Icon */
+#quest-icon {
+  position: fixed;
+  top: env(safe-area-inset-top, 12px);
+  left: env(safe-area-inset-left, 12px);
+  width: 50px;
+  height: 50px;
+  z-index: 99998;
+  cursor: pointer;
+}
+#quest-icon img {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px #ff3333);
+  transition: transform 0.2s ease;
+}
+#quest-icon:hover img { transform: scale(1.1); }
+
+/* Quest Panel */
+#quest-panel {
+  position: fixed;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: rgba(17,17,17,0.98);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 0 20px rgba(255,51,51,0.6);
+  z-index: 99999;
+  transition: bottom 0.5s ease;
+  overflow: hidden;
+}
+
+#quest-panel.active { bottom: 0; }
+
+#quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #222;
+  border-bottom: 1px solid #ff3333;
+}
+#quest-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #ff3333;
+}
+#quest-header button {
+  background: #ff3333;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#quest-header button:hover { background: #ff6666; }
+
+#quest-list {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+/* Quest Item */
+.quest-item {
+  background: rgba(34,34,34,0.9);
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.quest-item p {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+}
+.quest-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.quest-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #ff3333;
+  transition: width 0.3s ease;
+  border-radius: 6px;
+}
+
+/* Claim button */
+.quest-claim {
+  margin-top: 6px;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  display: none;
+}
+.quest-claim.active { display: block; }
+.quest-claim:hover { background: #ff4444; }
