@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>ZenoMoz Hub</title>
   <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- Level HUD (top-left) -->
+  <div id="level-hud" aria-hidden="false">
+    <div id="level-label">LVL <span id="level-display">1</span></div>
+    <div id="xp-bar"><div id="xp-fill"></div></div>
+    <div id="xp-text">0 / 100 XP</div>
+  </div>
 
   <!-- Particles Background -->
   <div id="particles-js"></div>
@@ -43,25 +51,33 @@
       <button class="btn changelog-btn" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
     </div>
 
-    <!-- Music Player -->
-    <div class="music-player">
-      <p id="track-name">Track Name</p>
-      <div class="controls">
-        <button id="prev-btn">⏮</button>
-        <button id="play-pause-btn" class="play">►</button>
-        <button id="next-btn">⏭</button>
-      </div>
-      <input type="range" id="progress-bar" min="0" max="100" value="0">
+    <!-- Music Selector (kept for quick single-track change) -->
+    <div class="music-selector">
+      <p>🎵 Quick Music:</p>
+      <button onclick="changeMusic('sounds/bg-music1.mp3', false)">Heaviness</button>
+      <button onclick="changeMusic('sounds/bg-music2.mp3', false)">The Heist</button>
+      <button onclick="changeMusic('sounds/bg-music3.mp3', false)">Back to me</button>
+      <button onclick="changeMusic('sounds/bg-music4.mp3', false)">Reborn</button>
     </div>
 
-    <!-- Music Selector (optional) -->
-    <div class="music-selector">
-      <p>🎵 Select Background Music:</p>
-      <button onclick="changeMusic('sounds/bg-music1.mp3')">Heaviness</button>
-      <button onclick="changeMusic('sounds/bg-music2.mp3')">The Heist</button>
-      <button onclick="changeMusic('sounds/bg-music3.mp3')">Back to Me</button>
-      <button onclick="changeMusic('sounds/bg-music4.mp3')">Reborn</button>
+    <!-- PLAYLIST CONTROLS (the proper player you asked for) -->
+    <div class="playlist">
+      <div id="track-name" aria-live="polite">Loading...</div>
+
+      <div class="playlist-controls">
+        <button id="prev-track" class="ctrl-btn" aria-label="Previous track">&lt;&lt;</button>
+        <button id="play-resume" class="ctrl-btn play" aria-label="Play">▸</button>
+        <button id="pause-btn" class="ctrl-btn pause" aria-label="Pause">||</button>
+        <button id="next-track" class="ctrl-btn" aria-label="Next track">&gt;&gt;</button>
+      </div>
+
+      <input id="track-slider" type="range" min="0" max="100" value="0" step="0.1" aria-label="Track position">
+      <div class="time-row">
+        <span id="time-current">0:00</span>
+        <span id="time-duration">0:00</span>
+      </div>
     </div>
+
   </div>
 
   <!-- Music Visualizer -->
@@ -70,5 +86,21 @@
   <div class="version-text">version: 1.0.1</div>
 
   <script src="js/script.js"></script>
+
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 200 },
+        "color": { "value": "#ff3333" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 1.6 }
+      },
+      "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
