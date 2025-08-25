@@ -32,10 +32,18 @@ const logo = document.querySelector('.logo img');
 const loadingScreen = document.getElementById('loading-screen');
 const loadingFill = document.querySelector('.loading-fill');
 const loadingPercent = document.querySelector('.loading-percent');
+
+// --- Music Visualizer ---
 const canvas = document.getElementById('music-visualizer');
 const ctx = canvas.getContext('2d');
 
-// --- Music Visualizer ---
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = 80;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioCtx.createAnalyser();
 let source;
@@ -76,7 +84,7 @@ function finishLoading(skip = false) {
   setTimeout(() => {
     loadingScreen.classList.remove('active');
     bgMusic.play().catch(() => {});
-    
+
     // Animate buttons
     btns.forEach((btn, i) => {
       setTimeout(() => {
@@ -89,6 +97,7 @@ function finishLoading(skip = false) {
     // Logo burst spin
     logo.style.animationDuration = '0.6s';
     setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
+
   }, skip ? 0 : 400);
 }
 
@@ -99,6 +108,10 @@ startBtn.addEventListener('click', () => {
   setTimeout(() => { startOverlay.style.display = 'none'; }, 360);
 
   loadingScreen.classList.add('active');
+
+  // Resume audio context
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  connectVisualizer(bgMusic);
 
   let progress = 0;
   window.loadingInterval = setInterval(() => {
@@ -118,7 +131,7 @@ startBtn.addEventListener('click', () => {
 loadingScreen.addEventListener("click", () => { finishLoading(true); });
 loadingScreen.addEventListener("touchstart", () => { finishLoading(true); });
 
-// --- Connect visualizer when music starts ---
+// --- Play visualizer on bgMusic play ---
 bgMusic.addEventListener('play', () => {
   if (audioCtx.state === 'suspended') audioCtx.resume();
   connectVisualizer(bgMusic);
