@@ -1,4 +1,8 @@
-// --- Click sound ---
+/* =============================
+   script.js — stable + XP HUD
+   ============================= */
+
+/* --- Click sound --- */
 function playClick() {
   try {
     const audio = new Audio('sounds/click.mp3');
@@ -8,12 +12,12 @@ function playClick() {
   } catch (e) {}
 }
 
-// --- Background music ---
+/* --- Background music --- */
 let bgMusic = new Audio('sounds/bg-music1.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.28;
 
-// --- Change music ---
+/* --- Change music --- */
 function changeMusic(src) {
   playClick();
   bgMusic.pause();
@@ -21,10 +25,12 @@ function changeMusic(src) {
   bgMusic.loop = true;
   bgMusic.volume = 0.28;
   bgMusic.play().catch(() => {});
-  if (audioCtx) connectVisualizer(bgMusic);
+  if (typeof connectVisualizer === 'function') {
+    try { connectVisualizer(bgMusic); } catch(e){}
+  }
 }
 
-// --- DOM elements ---
+/* --- DOM elements --- */
 const startOverlay = document.getElementById('start-overlay');
 const startBtn = document.getElementById('start-btn');
 const btns = document.querySelectorAll('.buttons .btn');
@@ -33,11 +39,12 @@ const loadingScreen = document.getElementById('loading-screen');
 const loadingFill = document.querySelector('.loading-fill');
 const loadingPercent = document.querySelector('.loading-percent');
 
-// --- Music Visualizer ---
+/* --- Music Visualizer --- */
 const canvas = document.getElementById('music-visualizer');
-const ctx = canvas.getContext('2d');
+const ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
 
 function resizeCanvas() {
+  if (!canvas) return;
   canvas.width = window.innerWidth;
   canvas.height = 120;
 }
@@ -49,18 +56,27 @@ const analyser = audioCtx.createAnalyser();
 let source;
 
 function connectVisualizer(audio) {
-  if (source) source.disconnect();
-  source = audioCtx.createMediaElementSource(audio);
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-  analyser.fftSize = 256; // Higher resolution
-  renderVisualizer();
-  pulseElements();
+  try {
+    if (source) source.disconnect();
+    source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 256; // Higher resolution
+    renderVisualizer();
+    pulseElements();
+  } catch (e) {
+    // some browsers throw if reused; tolerate it
+    console.warn('connectVisualizer error', e);
+  }
 }
 
-// --- Render Visualizer ---
+/* --- Render Visualizer --- */
+let visualizerRunning = false;
 function renderVisualizer() {
+  if (!ctx || !analyser) return;
+  if (visualizerRunning === false) visualizerRunning = true;
   requestAnimationFrame(renderVisualizer);
+
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
   analyser.getByteFrequencyData(dataArray);
@@ -73,7 +89,6 @@ function renderVisualizer() {
   for (let i = 0; i < bufferLength; i++) {
     const barHeight = dataArray[i];
 
-    // Gradient color cycling
     const hue = (i * 3 + Date.now() * 0.05) % 360;
     ctx.fillStyle = `hsl(${hue},100%,50%)`;
 
@@ -84,7 +99,7 @@ function renderVisualizer() {
     x += barWidth + 1;
   }
 
-  // Optional wave line
+  // wave line
   ctx.beginPath();
   ctx.moveTo(0, canvas.height / 2);
   for (let i = 0; i < bufferLength; i++) {
@@ -97,34 +112,38 @@ function renderVisualizer() {
   ctx.stroke();
 }
 
-// --- Pulse Buttons & Logo to Music ---
+/* --- Pulse Buttons & Logo to Music --- */
+let pulseRunning = false;
 function pulseElements() {
+  if (!analyser) return;
+  if (pulseRunning === false) pulseRunning = true;
+  requestAnimationFrame(pulseElements);
+
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
   analyser.getByteFrequencyData(dataArray);
 
-  const bass = dataArray.slice(0, 10).reduce((a,b)=>a+b)/10;
+  const bass = dataArray.slice(0, 10).reduce((a,b)=>a+b,0)/10;
 
   btns.forEach(btn => {
     const scale = 1 + bass/400;
-    btn.style.transform = `scale(${scale})`;
+    // do not override the pressed transform (hold)
+    if (!btn.dataset.pressed) btn.style.transform = `scale(${scale})`;
   });
 
   const logoScale = 1 + bass/600;
-  logo.style.transform = `rotate(${Date.now()*0.06}deg) scale(${logoScale})`;
-
-  requestAnimationFrame(pulseElements);
+  if (logo) logo.style.transform = `rotate(${Date.now()*0.06}deg) scale(${logoScale})`;
 }
 
-// --- Loading Screen ---
+/* --- Loading Screen --- */
 let loadingProgress = 0;
 let loadingInterval;
 
 function startLoading() {
-  loadingScreen.classList.add('active');
+  if (loadingScreen) loadingScreen.classList.add('active');
   loadingProgress = 0;
-  loadingFill.style.width = '0%';
-  loadingPercent.textContent = '0%';
+  if (loadingFill) loadingFill.style.width = '0%';
+  if (loadingPercent) loadingPercent.textContent = '0%';
 
   const loadingMessages = [
     "Booting modules...",
@@ -138,12 +157,13 @@ function startLoading() {
   loadingInterval = setInterval(() => {
     loadingProgress += Math.random() * 18;
     if (loadingProgress >= 100) loadingProgress = 100;
-    loadingFill.style.width = loadingProgress + "%";
-    loadingPercent.textContent = Math.floor(loadingProgress) + "%";
+    if (loadingFill) loadingFill.style.width = loadingProgress + "%";
+    if (loadingPercent) loadingPercent.textContent = Math.floor(loadingProgress) + "%";
 
-    // Update loading text
-    loadingText.textContent = loadingMessages[msgIndex];
-    msgIndex = (msgIndex + 1) % loadingMessages.length;
+    if (loadingText) {
+      loadingText.textContent = loadingMessages[msgIndex];
+      msgIndex = (msgIndex + 1) % loadingMessages.length;
+    }
 
     if (loadingProgress >= 100) finishLoading();
   }, 200);
@@ -151,14 +171,12 @@ function startLoading() {
 
 function finishLoading() {
   clearInterval(loadingInterval);
-  loadingFill.style.width = "100%";
-  loadingPercent.textContent = "100%";
+  if (loadingFill) loadingFill.style.width = "100%";
+  if (loadingPercent) loadingPercent.textContent = "100%";
 
   setTimeout(() => {
-    loadingScreen.classList.remove('active');
-
+    if (loadingScreen) loadingScreen.classList.remove('active');
     bgMusic.play().catch(() => {});
-
     if (audioCtx.state === 'suspended') audioCtx.resume();
     connectVisualizer(bgMusic);
 
@@ -166,101 +184,123 @@ function finishLoading() {
       setTimeout(() => btn.classList.add('active'), i * 120);
     });
 
-    // Logo burst spin
-    logo.style.animationDuration = '0.6s';
-    setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
+    if (logo) {
+      logo.style.animationDuration = '0.6s';
+      setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
+    }
   }, 400);
 }
 
-// --- Start Button ---
-startBtn.addEventListener('click', () => {
+/* --- Start Button --- */
+if (startBtn) startBtn.addEventListener('click', () => {
   playClick();
-  startOverlay.classList.add('hidden');
-  setTimeout(() => startOverlay.style.display = 'none', 400);
+  if (startOverlay) startOverlay.classList.add('hidden');
+  setTimeout(() => { if (startOverlay) startOverlay.style.display = 'none'; }, 400);
   startLoading();
 });
 
-// --- Skip Loading ---
-loadingScreen.addEventListener('click', finishLoading);
-loadingScreen.addEventListener('touchstart', finishLoading);
+/* --- Skip Loading --- */
+if (loadingScreen) loadingScreen.addEventListener('click', finishLoading);
+if (loadingScreen) loadingScreen.addEventListener('touchstart', finishLoading);
 
-// --- Button hold/tap scale ---
+/* --- Button hold/tap scale (preserve press state) --- */
 btns.forEach(btn => {
-  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(1.12)');
-  btn.addEventListener('mouseup', () => btn.style.transform = 'scale(1)');
-  btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
-  btn.addEventListener('touchstart', () => btn.style.transform = 'scale(1.12)');
-  btn.addEventListener('touchend', () => btn.style.transform = 'scale(1)');
+  btn.addEventListener('mousedown', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; });
+  btn.addEventListener('mouseup', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
+  btn.addEventListener('mouseleave', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
+  btn.addEventListener('touchstart', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; }, {passive:true});
+  btn.addEventListener('touchend', () => { btn.dataset.pressed = ''; btn.style.transform = ''; }, {passive:true});
 });
 
-// --- Particles.js safe init ---
-if (typeof particlesJS === 'function') {}
-// ======================
-// XP + Level System
-// ======================
+/* --- Particles.js safe init --- */
+if (typeof particlesJS === 'function') {
+  // already initialized in HTML bottom script
+}
 
-// Load saved values or defaults
-let xp = parseInt(localStorage.getItem("xp")) || 0;
-let level = parseInt(localStorage.getItem("level")) || 1;
+/* ============================
+   XP + Level System (mobile-safe)
+   ============================ */
+
+/* Load saved values or defaults */
+let xp = parseInt(localStorage.getItem("zmh_xp")) || 0;
+let level = parseInt(localStorage.getItem("zmh_level")) || 1;
 const maxLevel = 10000;
 
-// --- DOM Elements (from the HUD we added in HTML) ---
+/* DOM Elements for HUD */
 const levelDisplay = document.getElementById("level-display");
 const xpFill = document.getElementById("xp-fill");
 const xpText = document.getElementById("xp-text");
 
-// --- XP Formula ---
+/* XP needed formula */
 function xpNeededForLevel(lvl) {
-  // basic formula: 100 + (lvl-1)*20
   return 100 + (lvl - 1) * 20;
 }
 
-// --- Save Progress ---
+/* Save progress */
 function saveProgress() {
-  localStorage.setItem("xp", xp);
-  localStorage.setItem("level", level);
+  try {
+    localStorage.setItem("zmh_xp", String(xp));
+    localStorage.setItem("zmh_level", String(level));
+  } catch(e) {}
 }
 
-// --- Update HUD ---
+/* Update HUD and handle level ups (handles multiple level-ups at once) */
 function updateHUD() {
+  if (!xpFill || !levelDisplay || !xpText) return;
+
+  // handle level ups
   let needed = xpNeededForLevel(level);
-  if (xp >= needed) {
+  while (xp >= needed && level < maxLevel) {
     xp -= needed;
     level++;
-    if (level > maxLevel) level = maxLevel;
+    needed = xpNeededForLevel(level);
+  }
+  if (level >= maxLevel) {
+    level = maxLevel;
+    xp = Math.min(xp, xpNeededForLevel(level));
   }
 
-  let percent = Math.min((xp / xpNeededForLevel(level)) * 100, 100);
+  const percent = Math.floor((xp / xpNeededForLevel(level)) * 100);
   xpFill.style.width = percent + "%";
-
   levelDisplay.textContent = level;
   xpText.textContent = `${xp} / ${xpNeededForLevel(level)} XP`;
 
   saveProgress();
 }
 
-// --- Add XP ---
+/* Add XP safely */
 function addXP(amount) {
-  xp += amount;
+  if (typeof amount !== 'number' || amount <= 0) return;
+  xp += Math.floor(amount);
   updateHUD();
 }
 
-// --- Idle XP (1 per second) ---
-setInterval(() => {
+/* Idle XP - 1 XP per second while page open */
+let idleInterval = setInterval(() => {
   addXP(1);
 }, 1000);
 
-// --- Example Button Rewards ---
-// Social media buttons = +100 XP
-document.querySelectorAll(".btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    let reward = 5; // default click XP
-    if (btn.classList.contains("discord")) reward = 100;
-    if (btn.classList.contains("youtube")) reward = 100;
-    if (btn.classList.contains("twitter")) reward = 100;
+/* Button XP: default +5, +100 for social-like buttons */
+/* We'll treat buttons that have class 'social' or a data attribute data-social as social */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    let reward = 5;
+    if (btn.classList.contains('social') || btn.dataset.social === 'true') reward = 100;
     addXP(reward);
   });
 });
 
-// --- Init ---
+/* initialize HUD display right away */
 updateHUD();
+
+/* Auto-resume audio context on user click (mobile webview gesture) */
+document.addEventListener('click', function __zmh_resume() {
+  try {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e){}
+}, {once: true});
+
+/* Expose helpers for debugging in console (optional) */
+window.zmh = window.zmh || {};
+window.zmh.addXP = addXP;
+window.zmh.getProgress = () => ({ xp, level });
