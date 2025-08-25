@@ -1,66 +1,138 @@
-// --- Click sound (tries local file, fallback to web-audio beep) ---
-function playClick() {
+(() => {
+  "use strict";
+
+  // ---------------------------------------------
+  // Utilities
+  // ---------------------------------------------
+  const $ = (sel, parent = document) => parent.querySelector(sel);
+  const $$ = (sel, parent = document) => Array.from(parent.querySelectorAll(sel));
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isTouch = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+  // Throttle using rAF (for mousemove)
+  const withRaf = (fn) => {
+    let ticking = false;
+    return function (...args) {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          fn.apply(this, args);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+  };
+
+  // ---------------------------------------------
+  // Audio: click + bg music
+  // ---------------------------------------------
+  let clickAudio;
   try {
-    const audio = new Audio('sounds/click.mp3');
-    audio.volume = 0.8;
-    audio.play().catch(() => {
-      // ignore autoplay block
-    });
-  } catch (e) {
+    clickAudio = new Audio("sounds/click.mp3");
+    clickAudio.volume = 0.8;
+  } catch (_) {
+    clickAudio = null;
+  }
+
+  function playClick() {
+    // If local file fails (autoplay), fall back to a tiny web-audio beep
+    if (clickAudio) {
+      clickAudio.currentTime = 0;
+      clickAudio.play().catch(() => fallbackBeep());
+    } else {
+      fallbackBeep();
+    }
+  }
+
+  function fallbackBeep() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.value = 650;
-      g.gain.value = 0.03;
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start();
-      setTimeout(() => { o.stop(); ctx.close(); }, 80);
-    } catch (err) { /* ignore */ }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = 650;
+      gain.gain.value = 0.03;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      setTimeout(() => { osc.stop(); ctx.close(); }, 80);
+    } catch (_) {}
   }
-}
 
-// --- Background music ---
-const bgMusic = new Audio('sounds/bg-music.mp3');
-bgMusic.loop = true;
-bgMusic.volume = 0.28;
+  const bgMusic = (() => {
+    let a = null;
+    try {
+      a = new Audio("sounds/bg-music.mp3");
+      a.loop = true;
+      a.volume = 0.28;
+    } catch (_) {}
+    return a;
+  })();
 
-// --- Start button logic ---
-const startOverlay = document.getElementById('start-overlay');
-const startBtn = document.getElementById('start-btn');
-const btns = document.querySelectorAll('.buttons .btn');
-const logo = document.querySelector('.logo img');
+  const music = {
+    playing: false,
+    async play() {
+      if (!bgMusic) return;
+      try {
+        await bgMusic.play();
+        this.playing = true;
+      } catch (_) {
+        // autoplay blocked until user interacts more—ignore
+      }
+    },
+    pause() {
+      if (!bgMusic) return;
+      bgMusic.pause();
+      this.playing = false;
+    },
+    fadeTo(target = 0.28, ms = 600) {
+      if (!bgMusic) return;
+      const start = bgMusic.volume;
+      const delta = target - start;
+      if (delta === 0) return;
+      const startAt = performance.now();
+      const step = (t) => {
+        const p = Math.min(1, (t - startAt) / ms);
+        bgMusic.volume = start + delta * p;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+  };
 
-startBtn.addEventListener('click', () => {
-  // try play music (might be blocked until user interacts)
-  bgMusic.play().catch(() => { /* autoplay blocked — fine */ });
-
-  // enable and animate buttons with a stagger
-  btns.forEach((btn, i) => {
-    setTimeout(() => {
-      btn.style.pointerEvents = 'auto';
-      btn.style.opacity = '1';
-      btn.style.transform = 'translateY(0)';
-    }, 110 * i + 60);
+  // Pause/resume bg music when tab hidden/visible
+  document.addEventListener("visibilitychange", () => {
+    if (!bgMusic) return;
+    if (document.hidden) music.fadeTo(0.0, 300);
+    else if (music.playing) music.fadeTo(0.28, 300);
   });
 
-  // visually hide overlay
-  startOverlay.classList.add('hidden');
-  setTimeout(() => { startOverlay.style.display = 'none'; }, 360);
+  // ---------------------------------------------
+  // DOM refs
+  // ---------------------------------------------
+  const startOverlay = $("#start-overlay");
+  const startBtn = $("#start-btn");
+  const buttons = $$(".buttons .btn");
+  const logoImg = $(".logo img");
 
-  // quick speed-up effect for logo (temporarily speed animation)
-  const comp = getComputedStyle(logo);
-  const prevDur = comp.animationDuration || '10s';
-  logo.style.animationDuration = '0.6s';
-  setTimeout(() => {
-    logo.style.animationDuration = prevDur;
-  }, 700);
-});
+  // Guard if essential nodes are missing
+  if (!startOverlay || !startBtn) {
+    console.warn("start overlay or button not found");
+    return;
+  }
 
-// --- particles.js config (in case script.js loaded before inline config) ---
-// (index.html also initializes particles with config — this is a safe no-op)
-if (typeof particlesJS === 'function') {
-  // nothing here — config in index.html ensures initialization
-}
+  // ---------------------------------------------
+  // Unlock sequence on START
+  // ---------------------------------------------
+  let started = false;
+
+  function hideOverlay() {
+    startOverlay.classList.add("hidden");
+    // After CSS opacity transition, remove from layout
+    setTimeout(() => { startOverlay.style.display = "none"; }, 360);
+  }
+
+  function speedBurstLogo() {
+    if (!logoImg) return;
+    const prevDur = getComputedStyle(logoImg).animationDuration || "10s";
+    logoImg.style.animation
