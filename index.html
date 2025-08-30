@@ -20,18 +20,6 @@
   <!-- Particles Background -->
   <div id="particles-js"></div>
 
-  <!-- Burger Menu -->
-  <div id="burger-menu">☰</div>
-
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <ul>
-      <li onclick="openRedeem()">Redeem Code</li>
-      <li>Settings (coming soon)</li>
-      <li>Feedback (coming soon)</li>
-    </ul>
-  </div>
-
   <!-- Start Overlay -->
   <div id="start-overlay">
     <button id="start-btn">Run</button>
@@ -88,18 +76,22 @@
 
   <div class="version-text">version: 1.0.1</div>
 
-  <!-- Redeem Overlay -->
-  <div id="redeem-overlay">
-    <div id="redeem-particles"></div>
-    <div class="redeem-content">
-      <h2>Redeem Code</h2>
-      <input type="text" id="redeem-input" placeholder="Enter your code..."/>
-      <button onclick="redeemCode()">Redeem</button>
-      <p id="redeem-message"></p>
-      <button onclick="closeRedeem()">Close</button>
-    </div>
-  </div>
-
   <script src="js/script.js"></script>
+
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 200 },
+        "color": { "value": "#ff3333" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 1.6 }
+      },
+      "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
