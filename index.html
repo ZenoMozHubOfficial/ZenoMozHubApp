@@ -9,22 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Burger Menu -->
-<div class="burger">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
 
-<nav class="side-menu">
-  <ul>
-    <li><a href="index.html">🏠 Home</a></li>
-    <li><a href="toolbox.html">🧰 ToolBox</a></li>
-    <li><a href="scripts.html">📜 Get Scripts</a></li>
-    <li><a href="guide.html">🎓 Guide</a></li>
-    <li><a href="https://tinyurl.com/ChangeLogsZenoMozHub" target="_blank">📝 ChangeLogs</a></li>
-  </ul>
-</nav>
   <!-- Level HUD (top-left) -->
   <div id="level-hud" aria-hidden="false">
     <div id="level-label">LVL <span id="level-display">1</span></div>
@@ -90,6 +75,16 @@
   <canvas id="music-visualizer" width="1200" height="100"></canvas>
 
   <div class="version-text">version: 1.0.1</div>
+
+  <!-- 🔥 Code Redeem GUI -->
+  <div id="code-gui" class="hidden">
+    <div class="code-box">
+      <h2>Enter Code</h2>
+      <input type="text" id="code-input" placeholder="Enter your code...">
+      <button id="code-submit">Submit</button>
+      <p id="code-result"></p>
+    </div>
+  </div>
 
   <script src="js/script.js"></script>
 
