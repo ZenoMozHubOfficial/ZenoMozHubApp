@@ -303,39 +303,75 @@ document.addEventListener('click', function __zmh_resume() {
 /* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
-window.zmh.getProgress = () => ({ xp, level }); // Burger toggle
+window.zmh.getProgress = () => ({ xp, level });/* === Existing Music + HUD stuff === */
+/* (keep your current visualizer, xp, loading, etc. here) */
+
+/* Sidebar toggle */
 const burger = document.getElementById("burger");
-const menu = document.getElementById("menu");
+const sidebar = document.getElementById("sidebar");
 burger.addEventListener("click", () => {
-  menu.classList.toggle("show");
+  sidebar.classList.toggle("active");
 });
 
-// Code GUI
-const codeGui = document.getElementById("code-gui");
-const menuCodeBtn = document.getElementById("menu-code");
-const codeSubmit = document.getElementById("code-submit");
-const codeInput = document.getElementById("code-input");
-const codeResult = document.getElementById("code-result");
-
-menuCodeBtn.addEventListener("click", () => {
-  codeGui.classList.remove("hidden");
+/* Redeem Overlay */
+const redeemBtn = document.getElementById("redeem-btn");
+const redeemOverlay = document.getElementById("redeem-overlay");
+const redeemClose = document.getElementById("redeem-close");
+redeemBtn.addEventListener("click", () => {
+  redeemOverlay.style.display = "block";
+  particlesJS("redeem-particles", {
+    "particles": {
+      "number": { "value": 100 },
+      "color": { "value": "#ff3333" },
+      "size": { "value": 3 },
+      "line_linked": { "enable": true, "color": "#ff3333" },
+      "move": { "enable": true, "speed": 2 }
+    }
+  });
 });
+redeemClose.addEventListener("click", () => {
+  redeemOverlay.style.display = "none";
+});
+
+/* Redeem codes system */
+const redeemInput = document.getElementById("redeem-input");
+const redeemSubmit = document.getElementById("redeem-submit");
+const redeemMsg = document.getElementById("redeem-message");
+
+let playerXP = 0;
+let playerLevel = 1;
+let xpToNextLevel = 100;
 
 const codes = {
-  "Sub4Moz": { reward: "600 XP", used: false },
-  "JustMeAl3x": { reward: "10 Levels", used: false }
+  "JustAl3xHere": { xp: 600, level: 0 },
+  "ZenoMozHub": { xp: 0, level: 5 },
+  "SkyeMozScriptz": { xp: 8000, level: 0 },
+  "LimLimLemonMyAss": { xp: 50, level: 0 },
+  "2025Code": { xp: 2025, level: 0 }
 };
 
-codeSubmit.addEventListener("click", () => {
-  const val = codeInput.value.trim();
-  if (codes[val]) {
-    if (codes[val].used) {
-      codeResult.textContent = "❌ Code already redeemed!";
-    } else {
-      codes[val].used = true;
-      codeResult.textContent = `✅ Success! You got ${codes[val].reward}`;
+redeemSubmit.addEventListener("click", () => {
+  const code = redeemInput.value.trim();
+  if (codes[code]) {
+    const reward = codes[code];
+    if (reward.xp > 0) {
+      playerXP += reward.xp;
+      redeemMsg.textContent = `✅ Code redeemed! +${reward.xp} XP`;
     }
+    if (reward.level > 0) {
+      playerLevel = reward.level;
+      redeemMsg.textContent = `✅ Code redeemed! Level set to ${reward.level}`;
+    }
+    updateHUD();
   } else {
-    codeResult.textContent = "❌ Invalid code.";
+    redeemMsg.textContent = "❌ Invalid code!";
   }
+  redeemInput.value = "";
 });
+
+/* HUD Update */
+function updateHUD() {
+  document.getElementById("level-display").textContent = playerLevel;
+  document.getElementById("xp-fill").style.width = `${(playerXP % xpToNextLevel) / xpToNextLevel * 100}%`;
+  document.getElementById("xp-text").textContent = `${playerXP} / ${xpToNextLevel} XP`;
+}
