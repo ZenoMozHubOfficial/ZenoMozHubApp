@@ -303,75 +303,54 @@ document.addEventListener('click', function __zmh_resume() {
 /* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
-window.zmh.getProgress = () => ({ xp, level });/* === Existing Music + HUD stuff === */
-/* (keep your current visualizer, xp, loading, etc. here) */
-
-/* Sidebar toggle */
-const burger = document.getElementById("burger");
-const sidebar = document.getElementById("sidebar");
-burger.addEventListener("click", () => {
-  sidebar.classList.toggle("active");
+window.zmh.getProgress = () => ({ xp, level });// Burger Menu Toggle
+document.getElementById("burger-menu").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("active");
 });
 
-/* Redeem Overlay */
-const redeemBtn = document.getElementById("redeem-btn");
-const redeemOverlay = document.getElementById("redeem-overlay");
-const redeemClose = document.getElementById("redeem-close");
-redeemBtn.addEventListener("click", () => {
-  redeemOverlay.style.display = "block";
+// Redeem Overlay Open/Close
+function openRedeem() {
+  document.getElementById("redeem-overlay").classList.add("active");
   particlesJS("redeem-particles", {
     "particles": {
-      "number": { "value": 100 },
+      "number": { "value": 120 },
       "color": { "value": "#ff3333" },
+      "shape": { "type": "circle" },
+      "opacity": { "value": 0.5 },
       "size": { "value": 3 },
-      "line_linked": { "enable": true, "color": "#ff3333" },
-      "move": { "enable": true, "speed": 2 }
-    }
+      "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
+      "move": { "enable": true, "speed": 1.2 }
+    },
+    "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
+    "retina_detect": true
   });
-});
-redeemClose.addEventListener("click", () => {
-  redeemOverlay.style.display = "none";
-});
+}
 
-/* Redeem codes system */
-const redeemInput = document.getElementById("redeem-input");
-const redeemSubmit = document.getElementById("redeem-submit");
-const redeemMsg = document.getElementById("redeem-message");
+function closeRedeem() {
+  document.getElementById("redeem-overlay").classList.remove("active");
+}
 
-let playerXP = 0;
-let playerLevel = 1;
-let xpToNextLevel = 100;
-
+// Redeem Codes
 const codes = {
-  "JustAl3xHere": { xp: 600, level: 0 },
-  "ZenoMozHub": { xp: 0, level: 5 },
-  "SkyeMozScriptz": { xp: 8000, level: 0 },
-  "LimLimLemonMyAss": { xp: 50, level: 0 },
-  "2025Code": { xp: 2025, level: 0 }
+  "JustAl3xHere": { xp: 600 },
+  "ZenoMozHub": { level: 5 },
+  "SkyeMozScriptz": { xp: 8000 },
+  "LimLimLemonMyAss": { xp: 50 },
+  "2025Code": { xp: 2025 }
 };
 
-redeemSubmit.addEventListener("click", () => {
-  const code = redeemInput.value.trim();
-  if (codes[code]) {
-    const reward = codes[code];
-    if (reward.xp > 0) {
-      playerXP += reward.xp;
-      redeemMsg.textContent = `✅ Code redeemed! +${reward.xp} XP`;
-    }
-    if (reward.level > 0) {
-      playerLevel = reward.level;
-      redeemMsg.textContent = `✅ Code redeemed! Level set to ${reward.level}`;
-    }
-    updateHUD();
-  } else {
-    redeemMsg.textContent = "❌ Invalid code!";
-  }
-  redeemInput.value = "";
-});
+function redeemCode() {
+  const input = document.getElementById("redeem-input").value.trim();
+  const msg = document.getElementById("redeem-message");
 
-/* HUD Update */
-function updateHUD() {
-  document.getElementById("level-display").textContent = playerLevel;
-  document.getElementById("xp-fill").style.width = `${(playerXP % xpToNextLevel) / xpToNextLevel * 100}%`;
-  document.getElementById("xp-text").textContent = `${playerXP} / ${xpToNextLevel} XP`;
+  if (codes[input]) {
+    let reward = codes[input];
+    if (reward.xp) {
+      msg.textContent = `✅ Code redeemed! You got +${reward.xp} XP!`;
+    } else if (reward.level) {
+      msg.textContent = `✅ Code redeemed! You unlocked Level ${reward.level}!`;
+    }
+  } else {
+    msg.textContent = "❌ Invalid code.";
+  }
 }
