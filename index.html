@@ -3,63 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Guide - ZenoMoz Hub</title>
+  <title>ZenoMoz Hub</title>
   <link rel="stylesheet" href="css/style.css"/>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+<!-- Burger Menu -->
+<div class="burger">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
 
-  <!-- Burger Menu -->
-  <div class="burger-menu">
-    <div class="burger-icon" onclick="toggleMenu()">☰</div>
-    <div class="menu-links" id="menuLinks">
-      <a href="index.html">🔑 Get Key</a>
-      <a href="toolbox.html">🧰 ToolBox</a>
-      <a href="scripts.html">📜 Get Scripts</a>
-      <a href="guide.html" class="active">🎓 Guide</a>
-      <a href="https://tinyurl.com/ChangeLogsZenoMozHub" target="_blank">📝 ChangeLogs</a>
-    </div>
+<nav class="side-menu">
+  <ul>
+    <li><a href="index.html">🏠 Home</a></li>
+    <li><a href="toolbox.html">🧰 ToolBox</a></li>
+    <li><a href="scripts.html">📜 Get Scripts</a></li>
+    <li><a href="guide.html">🎓 Guide</a></li>
+    <li><a href="https://tinyurl.com/ChangeLogsZenoMozHub" target="_blank">📝 ChangeLogs</a></li>
+  </ul>
+</nav>
+  <!-- Level HUD (top-left) -->
+  <div id="level-hud" aria-hidden="false">
+    <div id="level-label">LVL <span id="level-display">1</span></div>
+    <div id="xp-bar"><div id="xp-fill"></div></div>
+    <div id="xp-text">0 / 100 XP</div>
   </div>
 
   <!-- Particles Background -->
   <div id="particles-js"></div>
 
-  <!-- Page Content -->
+  <!-- Start Overlay -->
+  <div id="start-overlay">
+    <button id="start-btn">Run</button>
+  </div>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <img src="images/logo.png" alt="Loading Logo" class="loading-logo" />
+    <div class="loading-bar">
+      <div class="loading-fill"></div>
+      <div class="loading-percent">0%</div>
+    </div>
+    <p class="loading-text">Initializing ZenoMoz Hub...</p>
+  </div>
+
+  <!-- Main Content -->
   <div class="container">
     <div class="logo">
       <img src="images/logo.png" alt="ZenoMoz Hub Logo" />
     </div>
-    <h1>🎓 ZenoMoz Hub Guide</h1>
-    <p>Welcome to the official guide. Learn how to use scripts, executors, and more!</p>
+    <h1>ZenoMoz Hub</h1>
+    <p>⚡ A Hub with scripts & executors for free! By SkyeMozScriptz! ⚡</p>
 
-    <div class="content-box">
-      <h2>Getting Started</h2>
-      <p>1. Grab the key from the key system.</p>
-      <p>2. Open your Roblox executor and inject.</p>
-      <p>3. Load ZenoMoz Hub and paste your key.</p>
+    <div class="buttons">
+      <button class="btn" onclick="playClick(); window.open('https://zeno-moz-hub-key.vercel.app/','_blank')">🔑 Get Key</button>
+      <button class="btn" onclick="playClick(); window.open('https://scripts-seven-beige.vercel.app/','_blank')">🧰 ToolBox</button>
+      <button class="btn" onclick="playClick(); window.open('https://way-to-scripts.vercel.app/','_blank')">📜 Get Scripts</button>
+      <button class="btn" onclick="playClick(); window.open('https://guide-and-tips.vercel.app/','_blank')">🎓 Guide</button>
+      <button class="btn changelog-btn" onclick="playClick(); window.open('https://tinyurl.com/ChangeLogsZenoMozHub','_blank')">📝 ChangeLogs</button>
     </div>
 
-    <div class="content-box">
-      <h2>Tips & Tricks</h2>
-      <ul>
-        <li>Always update to the newest version.</li>
-        <li>Use supported executors for best stability.</li>
-        <li>Check our Discord for more tips.</li>
-      </ul>
+    <!-- Music Selector -->
+    <div class="music-selector">
+      <p>🎵 Select Background Music:</p>
+      <button onclick="changeMusic('sounds/bg-music1.mp3')">Heaviness</button>
+      <button onclick="changeMusic('sounds/bg-music2.mp3')">The Heist</button>
+      <button onclick="changeMusic('sounds/bg-music3.mp3')">Back to me</button>
+      <button onclick="changeMusic('sounds/bg-music4.mp3')">Reborn</button>
+      <button onclick="changeMusic('sounds/bg-music5.mp3')">Afterlife</button>
+      <button onclick="changeMusic('sounds/bg-music6.mp3')">Neon Dreams</button>
+      <button onclick="changeMusic('sounds/bg-music7.mp3')">Dark Horizon</button>
+      <button onclick="changeMusic('sounds/bg-music8.mp3')">Eclipse</button>
+      <button onclick="changeMusic('sounds/bg-music9.mp3')">Cyber Rush</button>
+      <button onclick="changeMusic('sounds/bg-music10.mp3')">Void Walker</button>
+      <button onclick="changeMusic('sounds/bg-music11.mp3')">Phoenix</button>
+      <button onclick="changeMusic('sounds/bg-music12.mp3')">Overdrive</button>
+      <button onclick="changeMusic('sounds/bg-music13.mp3')">Glitchstorm</button>
+      <button onclick="changeMusic('sounds/bg-music14.mp3')">Silent Core</button>
     </div>
   </div>
+
+  <!-- Music Visualizer -->
+  <canvas id="music-visualizer" width="1200" height="100"></canvas>
 
   <div class="version-text">version: 1.0.1</div>
 
   <script src="js/script.js"></script>
+
   <script>
-    function toggleMenu() {
-      document.getElementById("menuLinks").classList.toggle("show");
-    }
     particlesJS("particles-js", {
       "particles": {
-        "number": { "value": 120 },
+        "number": { "value": 200 },
         "color": { "value": "#ff3333" },
         "shape": { "type": "circle" },
         "opacity": { "value": 0.5, "random": true },
