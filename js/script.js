@@ -99,19 +99,6 @@ function renderVisualizer() {
     x += barWidth + 1;
   }
 
-  // wave line
-  ctx.beginPath();
-  ctx.moveTo(0, canvas.height / 2);
-  for (let i = 0; i < bufferLength; i++) {
-    const y = canvas.height / 2 - (dataArray[i] / 3);
-    const x = (i / bufferLength) * canvas.width;
-    ctx.lineTo(x, y);
-  }
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
-
 /* --- Pulse Buttons & Logo to Music --- */
 let pulseRunning = false;
 function pulseElements() {
@@ -191,13 +178,6 @@ function finishLoading() {
   }, 400);
 }
 
-/* --- Start Button --- */
-if (startBtn) startBtn.addEventListener('click', () => {
-  playClick();
-  if (startOverlay) startOverlay.classList.add('hidden');
-  setTimeout(() => { if (startOverlay) startOverlay.style.display = 'none'; }, 400);
-  startLoading();
-});
 
 /* --- Skip Loading --- */
 if (loadingScreen) loadingScreen.addEventListener('click', finishLoading);
@@ -304,3 +284,7 @@ document.addEventListener('click', function __zmh_resume() {
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
+// Auto-start loading screen on page load
+window.addEventListener("load", () => {
+  startLoading();
+});
