@@ -304,3 +304,27 @@ document.addEventListener('click', function __zmh_resume() {
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
+/* === your full script.js stays exactly the same === */
+
+/* =============================
+   Burger Menu Toggle
+   ============================= */
+document.addEventListener("DOMContentLoaded", () => {
+  const burger = document.querySelector(".burger");
+  const sideMenu = document.querySelector(".side-menu");
+
+  if (burger && sideMenu) {
+    burger.addEventListener("click", () => {
+      burger.classList.toggle("active");
+      sideMenu.classList.toggle("active");
+    });
+
+    // Close menu when clicking a link
+    sideMenu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        burger.classList.remove("active");
+        sideMenu.classList.remove("active");
+      });
+    });
+  }
+});
