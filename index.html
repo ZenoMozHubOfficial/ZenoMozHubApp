@@ -10,8 +10,8 @@
 </head>
 <body>
 
-  <!-- Level HUD -->
-  <div id="level-hud">
+  <!-- Level HUD (top-left) -->
+  <div id="level-hud" aria-hidden="false">
     <div id="level-label">LVL <span id="level-display">1</span></div>
     <div id="xp-bar"><div id="xp-fill"></div></div>
     <div id="xp-text">0 / 100 XP</div>
@@ -19,6 +19,18 @@
 
   <!-- Particles Background -->
   <div id="particles-js"></div>
+
+  <!-- Burger Menu -->
+  <div id="burger-menu">☰</div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <ul>
+      <li onclick="openRedeem()">Redeem Code</li>
+      <li>Settings (coming soon)</li>
+      <li>Feedback (coming soon)</li>
+    </ul>
+  </div>
 
   <!-- Start Overlay -->
   <div id="start-overlay">
@@ -76,24 +88,16 @@
 
   <div class="version-text">version: 1.0.1</div>
 
-  <!-- Hamburger Menu -->
-  <div id="burger">&#9776;</div>
-  <div id="sidebar">
-    <a href="#" id="redeem-btn">🎁 Redeem Code</a>
-    <a href="#">⚙️ Settings (coming soon)</a>
-    <a href="#">💬 Feedback (coming soon)</a>
-  </div>
-
   <!-- Redeem Overlay -->
   <div id="redeem-overlay">
-    <div id="redeem-box">
-      <h2>🎁 Redeem Code</h2>
-      <input type="text" id="redeem-input" placeholder="Enter your code..." />
-      <button id="redeem-submit">Redeem</button>
-      <p id="redeem-message"></p>
-      <button id="redeem-close">Close</button>
-    </div>
     <div id="redeem-particles"></div>
+    <div class="redeem-content">
+      <h2>Redeem Code</h2>
+      <input type="text" id="redeem-input" placeholder="Enter your code..."/>
+      <button onclick="redeemCode()">Redeem</button>
+      <p id="redeem-message"></p>
+      <button onclick="closeRedeem()">Close</button>
+    </div>
   </div>
 
   <script src="js/script.js"></script>
