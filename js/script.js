@@ -1,5 +1,5 @@
 /* =============================
-   script.js — stable + XP HUD + Theme System
+   script.js — stable + XP HUD
    ============================= */
 
 /* --- Click sound --- */
@@ -17,18 +17,32 @@ let bgMusic = new Audio('sounds/bg-music1.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.28;
 
+/* --- Change music --- */
+function changeMusic(src) {
+  playClick();
+  bgMusic.pause();
+  bgMusic = new Audio(src);
+  bgMusic.loop = true;
+  bgMusic.volume = 0.28;
+  bgMusic.play().catch(() => {});
+  if (typeof connectVisualizer === 'function') {
+    try { connectVisualizer(bgMusic); } catch(e){}
+  }
+}
+
 /* --- DOM elements --- */
 const btns = document.querySelectorAll('.buttons .btn');
-const title = document.getElementById('title');
+const logo = document.querySelector('.logo img');
 const loadingScreen = document.getElementById('loading-screen');
 const loadingFill = document.querySelector('.loading-fill');
 const loadingPercent = document.querySelector('.loading-percent');
 
 /* --- Music Visualizer --- */
 const canvas = document.getElementById('music-visualizer');
-const ctx = canvas.getContext('2d');
+const ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
 
 function resizeCanvas() {
+  if (!canvas) return;
   canvas.width = window.innerWidth;
   canvas.height = 120;
 }
@@ -40,15 +54,24 @@ const analyser = audioCtx.createAnalyser();
 let source;
 
 function connectVisualizer(audio) {
-  if (source) source.disconnect();
-  source = audioCtx.createMediaElementSource(audio);
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-  analyser.fftSize = 256;
-  renderVisualizer();
+  try {
+    if (source) source.disconnect();
+    source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 256; // Higher resolution
+    renderVisualizer();
+    pulseElements();
+  } catch (e) {
+    console.warn('connectVisualizer error', e);
+  }
 }
 
+/* --- Render Visualizer --- */
+let visualizerRunning = false;
 function renderVisualizer() {
+  if (!ctx || !analyser) return;
+  if (visualizerRunning === false) visualizerRunning = true;
   requestAnimationFrame(renderVisualizer);
 
   const bufferLength = analyser.frequencyBinCount;
@@ -62,15 +85,125 @@ function renderVisualizer() {
 
   for (let i = 0; i < bufferLength; i++) {
     const barHeight = dataArray[i];
-    ctx.fillStyle = currentThemeColor;
+    const hue = (i * 3 + Date.now() * 0.05) % 360;
+    ctx.fillStyle = `hsl(${hue},100%,50%)`;
+
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.shadowBlur = 14;
+
     ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     x += barWidth + 1;
   }
+
+  // wave line
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height / 2);
+  for (let i = 0; i < bufferLength; i++) {
+    const y = canvas.height / 2 - (dataArray[i] / 3);
+    const x = (i / bufferLength) * canvas.width;
+    ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+/* --- Pulse Buttons & Logo to Music --- */
+let pulseRunning = false;
+function pulseElements() {
+  if (!analyser) return;
+  if (pulseRunning === false) pulseRunning = true;
+  requestAnimationFrame(pulseElements);
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  analyser.getByteFrequencyData(dataArray);
+
+  const bass = dataArray.slice(0, 10).reduce((a,b)=>a+b,0)/10;
+
+  btns.forEach(btn => {
+    const scale = 1 + bass/400;
+    if (!btn.dataset.pressed) btn.style.transform = `scale(${scale})`;
+  });
+
+  const logoScale = 1 + bass/600;
+  if (logo) logo.style.transform = `rotate(${Date.now()*0.06}deg) scale(${logoScale})`;
+}
+
+/* --- Loading Screen --- */
+let loadingProgress = 0;
+let loadingInterval;
+
+function startLoading() {
+  if (loadingScreen) loadingScreen.classList.add('active');
+  loadingProgress = 0;
+  if (loadingFill) loadingFill.style.width = '0%';
+  if (loadingPercent) loadingPercent.textContent = '0%';
+
+  const loadingMessages = [
+    "Booting modules...",
+    "Connecting ZenoMoz Core...",
+    "Injecting scripts...",
+    "Almost ready..."
+  ];
+  let msgIndex = 0;
+  const loadingText = document.querySelector('.loading-text');
+
+  loadingInterval = setInterval(() => {
+    loadingProgress += Math.random() * 18;
+    if (loadingProgress >= 100) loadingProgress = 100;
+    if (loadingFill) loadingFill.style.width = loadingProgress + "%";
+    if (loadingPercent) loadingPercent.textContent = Math.floor(loadingProgress) + "%";
+
+    if (loadingText) {
+      loadingText.textContent = loadingMessages[msgIndex];
+      msgIndex = (msgIndex + 1) % loadingMessages.length;
+    }
+
+    if (loadingProgress >= 100) finishLoading();
+  }, 200);
+}
+
+function finishLoading() {
+  clearInterval(loadingInterval);
+  if (loadingFill) loadingFill.style.width = "100%";
+  if (loadingPercent) loadingPercent.textContent = "100%";
+
+  setTimeout(() => {
+    if (loadingScreen) loadingScreen.classList.remove('active');
+    bgMusic.play().catch(() => {});
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    connectVisualizer(bgMusic);
+
+    btns.forEach((btn, i) => {
+      setTimeout(() => btn.classList.add('active'), i * 120);
+    });
+
+    if (logo) {
+      logo.style.animationDuration = '0.6s';
+      setTimeout(() => { logo.style.animationDuration = '10s'; }, 700);
+    }
+  }, 400);
+}
+
+/* --- Button hold/tap scale --- */
+btns.forEach(btn => {
+  btn.addEventListener('mousedown', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; });
+  btn.addEventListener('mouseup', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
+  btn.addEventListener('mouseleave', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
+  btn.addEventListener('touchstart', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; }, {passive:true});
+  btn.addEventListener('touchend', () => { btn.dataset.pressed = ''; btn.style.transform = ''; }, {passive:true});
+});
+
+/* --- Particles.js safe init --- */
+if (typeof particlesJS === 'function') {
+  // already initialized in HTML bottom script
 }
 
 /* ============================
    XP + Level System
    ============================ */
+
 let xp = parseInt(localStorage.getItem("zmh_xp")) || 0;
 let level = parseInt(localStorage.getItem("zmh_level")) || 1;
 const maxLevel = 10000;
@@ -82,108 +215,68 @@ const xpText = document.getElementById("xp-text");
 function xpNeededForLevel(lvl) {
   return 100 + (lvl - 1) * 20;
 }
+
 function saveProgress() {
-  localStorage.setItem("zmh_xp", xp);
-  localStorage.setItem("zmh_level", level);
+  try {
+    localStorage.setItem("zmh_xp", String(xp));
+    localStorage.setItem("zmh_level", String(level));
+  } catch(e) {}
 }
+
 function updateHUD() {
+  if (!xpFill || !levelDisplay || !xpText) return;
+
   let needed = xpNeededForLevel(level);
   while (xp >= needed && level < maxLevel) {
     xp -= needed;
     level++;
     needed = xpNeededForLevel(level);
   }
-  const percent = Math.floor((xp / needed) * 100);
+  if (level >= maxLevel) {
+    level = maxLevel;
+    xp = Math.min(xp, xpNeededForLevel(level));
+  }
+
+  const percent = Math.floor((xp / xpNeededForLevel(level)) * 100);
   xpFill.style.width = percent + "%";
   levelDisplay.textContent = level;
-  xpText.textContent = `${xp} / ${needed} XP`;
+  xpText.textContent = `${xp} / ${xpNeededForLevel(level)} XP`;
+
   saveProgress();
 }
+
 function addXP(amount) {
-  xp += amount;
+  if (typeof amount !== 'number' || amount <= 0) return;
+  xp += Math.floor(amount);
   updateHUD();
 }
-setInterval(() => { addXP(1); }, 1000);
-btns.forEach(btn => btn.addEventListener('click', () => addXP(5)));
-updateHUD();
 
-/* ============================
-   Theme System
-   ============================ */
-const themes = {
-  red: "#ff3333",
-  purple: "#9b59b6",
-  blue: "#3498db",
-  green: "#2ecc71",
-  gold: "#f1c40f",
-  pink: "#ff66cc",
-  cyan: "#00ffff"
-};
-let currentTheme = localStorage.getItem("zmh_theme") || "red";
-let currentThemeColor = themes[currentTheme];
+let idleInterval = setInterval(() => {
+  addXP(1);
+}, 1000);
 
-function applyTheme(theme) {
-  currentTheme = theme;
-  currentThemeColor = themes[theme];
-  localStorage.setItem("zmh_theme", theme);
-
-  // Change UI
-  title.style.color = currentThemeColor;
-  title.style.textShadow = `0 0 20px ${currentThemeColor}`;
-  btns.forEach(btn => {
-    btn.style.background = currentThemeColor;
-    btn.style.boxShadow = `0 0 12px ${currentThemeColor}`;
-  });
-  xpFill.style.background = currentThemeColor;
-  document.querySelector('.loading-fill').style.background = currentThemeColor;
-
-  // Update particles
-  particlesJS("particles-js", {
-    particles: {
-      number: { value: 80 },
-      color: { value: currentThemeColor },
-      shape: { type: "circle" },
-      opacity: { value: 0.5 },
-      size: { value: 3 },
-      line_linked: { enable: true, color: currentThemeColor, opacity: 0.4 },
-      move: { enable: true, speed: 2 }
-    }
-  });
-}
-
-// Hook theme buttons
-document.querySelectorAll(".theme-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    playClick();
-    applyTheme(btn.dataset.theme);
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    let reward = 5;
+    if (btn.classList.contains('social') || btn.dataset.social === 'true') reward = 100;
+    addXP(reward);
   });
 });
 
-// Apply saved theme
-applyTheme(currentTheme);
+updateHUD();
 
-/* --- Loading Screen --- */
-let loadingProgress = 0;
-let loadingInterval;
-function startLoading() {
-  loadingProgress = 0;
-  loadingInterval = setInterval(() => {
-    loadingProgress += Math.random() * 18;
-    if (loadingProgress >= 100) loadingProgress = 100;
-    loadingFill.style.width = loadingProgress + "%";
-    loadingPercent.textContent = Math.floor(loadingProgress) + "%";
-    if (loadingProgress >= 100) finishLoading();
-  }, 200);
-}
-function finishLoading() {
-  clearInterval(loadingInterval);
-  loadingFill.style.width = "100%";
-  loadingPercent.textContent = "100%";
-  setTimeout(() => {
-    loadingScreen.style.display = "none";
-    bgMusic.play().catch(() => {});
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    connectVisualizer(bgMusic);
-  }, 400);
-}
-window.addEventListener("load", () => startLoading());
+/* Auto-resume audio context */
+document.addEventListener('click', function __zmh_resume() {
+  try {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e){}
+}, {once: true});
+
+window.zmh = window.zmh || {};
+window.zmh.addXP = addXP;
+window.zmh.getProgress = () => ({ xp, level });
+
+/* --- Auto start loading on page load --- */
+window.addEventListener("load", () => {
+  startLoading();
+});
