@@ -303,66 +303,39 @@ document.addEventListener('click', function __zmh_resume() {
 /* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
-window.zmh.getProgress = () => ({ xp, level });
-// === Burger Toggle ===
-const burger = document.querySelector(".burger");
-const sideMenu = document.querySelector(".side-menu");
-
+window.zmh.getProgress = () => ({ xp, level }); // Burger toggle
+const burger = document.getElementById("burger");
+const menu = document.getElementById("menu");
 burger.addEventListener("click", () => {
-  sideMenu.classList.toggle("show");
+  menu.classList.toggle("show");
 });
 
-// === XP & Level System ===
-let playerXP = 0;
-let playerLevel = 1;
-let xpNeeded = 100;
+// Code GUI
+const codeGui = document.getElementById("code-gui");
+const menuCodeBtn = document.getElementById("menu-code");
+const codeSubmit = document.getElementById("code-submit");
+const codeInput = document.getElementById("code-input");
+const codeResult = document.getElementById("code-result");
 
-function updateHUD() {
-  document.getElementById("level-display").textContent = playerLevel;
-  document.getElementById("xp-fill").style.width = (playerXP / xpNeeded * 100) + "%";
-  document.getElementById("xp-text").textContent = playerXP + " / " + xpNeeded + " XP";
-}
+menuCodeBtn.addEventListener("click", () => {
+  codeGui.classList.remove("hidden");
+});
 
-function addXP(amount) {
-  playerXP += amount;
-  if (playerXP >= xpNeeded) {
-    playerXP -= xpNeeded;
-    playerLevel++;
-    xpNeeded = Math.floor(xpNeeded * 1.25);
-  }
-  updateHUD();
-}
-
-function addLevel(amount) {
-  playerLevel += amount;
-  updateHUD();
-}
-
-// === Redeem Codes System ===
-const redeemCodes = {
-  "Sub4Moz": { reward: () => addXP(600), used: false },
-  "JustMeAl3x": { reward: () => addLevel(10), used: false },
+const codes = {
+  "Sub4Moz": { reward: "600 XP", used: false },
+  "JustMeAl3x": { reward: "10 Levels", used: false }
 };
 
-function redeemCode() {
-  const codeInput = document.getElementById("code-input").value.trim();
-  const message = document.getElementById("code-message");
-
-  if (redeemCodes[codeInput]) {
-    if (!redeemCodes[codeInput].used) {
-      redeemCodes[codeInput].reward();
-      redeemCodes[codeInput].used = true;
-      message.textContent = "✅ Code redeemed!";
-      message.style.color = "lime";
+codeSubmit.addEventListener("click", () => {
+  const val = codeInput.value.trim();
+  if (codes[val]) {
+    if (codes[val].used) {
+      codeResult.textContent = "❌ Code already redeemed!";
     } else {
-      message.textContent = "⚠️ Code already used!";
-      message.style.color = "orange";
+      codes[val].used = true;
+      codeResult.textContent = `✅ Success! You got ${codes[val].reward}`;
     }
   } else {
-    message.textContent = "❌ Invalid code!";
-    message.style.color = "red";
+    codeResult.textContent = "❌ Invalid code.";
   }
-}
-
-// === Init HUD ===
-updateHUD();
+});
