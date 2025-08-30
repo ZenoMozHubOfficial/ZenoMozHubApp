@@ -304,3 +304,88 @@ document.addEventListener('click', function __zmh_resume() {
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
+/* === Hamburger Menu === */
+#menu-btn {
+  position: fixed;
+  top: env(safe-area-inset-top, 12px);
+  right: env(safe-area-inset-right, 12px);
+  width: 36px; height: 28px;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 10001;
+}
+#menu-btn span {
+  display: block;
+  height: 4px;
+  background: #fff;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+#menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+#menu-btn.active span:nth-child(2) { opacity: 0; }
+#menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+/* === Side Panel === */
+#side-panel {
+  position: fixed;
+  top: 0; right: -260px;
+  width: 260px; height: 100%;
+  background: rgba(20,20,20,0.96);
+  box-shadow: -4px 0 12px rgba(0,0,0,0.6);
+  z-index: 10000;
+  padding: 20px;
+  transition: right 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#side-panel.active { right: 0; }
+
+#side-panel button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #ff3333;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.25s;
+}
+#side-panel button:hover { background: #ff6666; }
+
+/* === Codes GUI === */
+#codes-gui {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0.9);
+  background: rgba(17,17,17,0.95);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  z-index: 10002;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+#codes-gui.active { display: flex; animation: popup 0.25s ease forwards; }
+@keyframes popup { from { opacity:0; transform:translate(-50%,-50%) scale(0.8);} to{opacity:1; transform:translate(-50%,-50%) scale(1);} }
+
+#codes-gui input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+#codes-gui button {
+  padding: 10px;
+  background: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+#codes-gui button:hover { background: #ff6666; }
