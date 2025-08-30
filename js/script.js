@@ -303,14 +303,33 @@ document.addEventListener('click', function __zmh_resume() {
 /* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
-window.zmh.getProgress = () => ({ xp, level });// ==========================
-// Player stats
-// ==========================
-let playerXP = 0;
-let playerLevel = 1;
-let xpNeeded = 100; // XP needed for next level
+window.zmh.getProgress = () => ({ xp, level });// ===================== Player Stats =====================
+let playerXP = parseInt(localStorage.getItem("playerXP")) || 0;
+let playerLevel = parseInt(localStorage.getItem("playerLevel")) || 1;
+let xpNeeded = 100 + (playerLevel - 1) * 50; 
 
-// Codes (easy to edit)
+function updateHUD() {
+  document.getElementById("level-display").textContent = playerLevel;
+  document.getElementById("xp-text").textContent = `${playerXP} / ${xpNeeded} XP`;
+  const percent = Math.min((playerXP / xpNeeded) * 100, 100);
+  document.getElementById("xp-fill").style.width = percent + "%";
+
+  // save progress
+  localStorage.setItem("playerXP", playerXP);
+  localStorage.setItem("playerLevel", playerLevel);
+}
+
+function addXP(amount) {
+  playerXP += amount;
+  while (playerXP >= xpNeeded) {
+    playerXP -= xpNeeded;
+    playerLevel++;
+    xpNeeded = 100 + (playerLevel - 1) * 50;
+  }
+  updateHUD();
+}
+
+// ===================== Redeem Codes =====================
 const codes = {
   "JustAl3xHere": { xp: 600 },
   "ZenoMozHub": { level: 5 },
@@ -319,44 +338,28 @@ const codes = {
   "2025Code": { xp: 2025 }
 };
 
-// ==========================
-// HUD Functions
-// ==========================
-function updateHUD() {
-  document.getElementById("level-display").textContent = playerLevel;
-  document.getElementById("xp-text").textContent = `${playerXP} / ${xpNeeded} XP`;
-  const percent = Math.min((playerXP / xpNeeded) * 100, 100);
-  document.getElementById("xp-fill").style.width = percent + "%";
-}
+let redeemedCodes = JSON.parse(localStorage.getItem("redeemedCodes")) || [];
 
-// Add XP + handle level up
-function addXP(amount) {
-  playerXP += amount;
-  while (playerXP >= xpNeeded) {
-    playerXP -= xpNeeded;
-    playerLevel++;
-    xpNeeded = Math.floor(xpNeeded * 1.5); // XP curve
-  }
-  updateHUD();
-}
-
-// ==========================
-// Redeem System
-// ==========================
 function redeemCode() {
   const input = document.getElementById("redeem-input").value.trim();
   const result = document.getElementById("redeem-result");
 
   if (codes[input]) {
-    const reward = codes[input];
-    if (reward.xp) {
-      addXP(reward.xp);
-      result.textContent = `✅ Code redeemed! You got +${reward.xp} XP.`;
-    }
-    if (reward.level) {
-      playerLevel = Math.max(playerLevel, reward.level);
-      result.textContent = `✅ Code redeemed! You are now Level ${playerLevel}.`;
-      updateHUD();
+    if (redeemedCodes.includes(input)) {
+      result.textContent = "⚠️ Code already redeemed.";
+    } else {
+      const reward = codes[input];
+      if (reward.xp) {
+        addXP(reward.xp);
+        result.textContent = `✅ Code redeemed! You got +${reward.xp} XP.`;
+      }
+      if (reward.level) {
+        playerLevel = Math.max(playerLevel, reward.level);
+        result.textContent = `✅ Code redeemed! You are now Level ${playerLevel}.`;
+        updateHUD();
+      }
+      redeemedCodes.push(input);
+      localStorage.setItem("redeemedCodes", JSON.stringify(redeemedCodes));
     }
   } else {
     result.textContent = "❌ Invalid code.";
@@ -365,23 +368,10 @@ function redeemCode() {
   document.getElementById("redeem-input").value = "";
 }
 
-// ==========================
-// Menu & Overlay Toggles
-// ==========================
-document.getElementById("burger-menu").addEventListener("click", () => {
-  document.getElementById("menu-overlay").classList.toggle("active");
+// ===================== Burger Menu =====================
+document.getElementById("burger-btn").addEventListener("click", () => {
+  document.getElementById("menu-container").classList.toggle("active");
 });
 
-document.getElementById("redeem-link").addEventListener("click", () => {
-  document.getElementById("redeem-overlay").classList.add("active");
-  document.getElementById("menu-overlay").classList.remove("active");
-});
-
-document.getElementById("close-redeem").addEventListener("click", () => {
-  document.getElementById("redeem-overlay").classList.remove("active");
-});
-
-// ==========================
-// Init
-// ==========================
+// ===================== Init =====================
 updateHUD();
