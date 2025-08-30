@@ -303,34 +303,14 @@ document.addEventListener('click', function __zmh_resume() {
 /* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
-window.zmh.getProgress = () => ({ xp, level });// Burger Menu Toggle
-document.getElementById("burger-menu").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("active");
-});
+window.zmh.getProgress = () => ({ xp, level });// ==========================
+// Player stats
+// ==========================
+let playerXP = 0;
+let playerLevel = 1;
+let xpNeeded = 100; // XP needed for next level
 
-// Redeem Overlay Open/Close
-function openRedeem() {
-  document.getElementById("redeem-overlay").classList.add("active");
-  particlesJS("redeem-particles", {
-    "particles": {
-      "number": { "value": 120 },
-      "color": { "value": "#ff3333" },
-      "shape": { "type": "circle" },
-      "opacity": { "value": 0.5 },
-      "size": { "value": 3 },
-      "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
-      "move": { "enable": true, "speed": 1.2 }
-    },
-    "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
-    "retina_detect": true
-  });
-}
-
-function closeRedeem() {
-  document.getElementById("redeem-overlay").classList.remove("active");
-}
-
-// Redeem Codes
+// Codes (easy to edit)
 const codes = {
   "JustAl3xHere": { xp: 600 },
   "ZenoMozHub": { level: 5 },
@@ -339,18 +319,69 @@ const codes = {
   "2025Code": { xp: 2025 }
 };
 
+// ==========================
+// HUD Functions
+// ==========================
+function updateHUD() {
+  document.getElementById("level-display").textContent = playerLevel;
+  document.getElementById("xp-text").textContent = `${playerXP} / ${xpNeeded} XP`;
+  const percent = Math.min((playerXP / xpNeeded) * 100, 100);
+  document.getElementById("xp-fill").style.width = percent + "%";
+}
+
+// Add XP + handle level up
+function addXP(amount) {
+  playerXP += amount;
+  while (playerXP >= xpNeeded) {
+    playerXP -= xpNeeded;
+    playerLevel++;
+    xpNeeded = Math.floor(xpNeeded * 1.5); // XP curve
+  }
+  updateHUD();
+}
+
+// ==========================
+// Redeem System
+// ==========================
 function redeemCode() {
   const input = document.getElementById("redeem-input").value.trim();
-  const msg = document.getElementById("redeem-message");
+  const result = document.getElementById("redeem-result");
 
   if (codes[input]) {
-    let reward = codes[input];
+    const reward = codes[input];
     if (reward.xp) {
-      msg.textContent = `✅ Code redeemed! You got +${reward.xp} XP!`;
-    } else if (reward.level) {
-      msg.textContent = `✅ Code redeemed! You unlocked Level ${reward.level}!`;
+      addXP(reward.xp);
+      result.textContent = `✅ Code redeemed! You got +${reward.xp} XP.`;
+    }
+    if (reward.level) {
+      playerLevel = Math.max(playerLevel, reward.level);
+      result.textContent = `✅ Code redeemed! You are now Level ${playerLevel}.`;
+      updateHUD();
     }
   } else {
-    msg.textContent = "❌ Invalid code.";
+    result.textContent = "❌ Invalid code.";
   }
+
+  document.getElementById("redeem-input").value = "";
 }
+
+// ==========================
+// Menu & Overlay Toggles
+// ==========================
+document.getElementById("burger-menu").addEventListener("click", () => {
+  document.getElementById("menu-overlay").classList.toggle("active");
+});
+
+document.getElementById("redeem-link").addEventListener("click", () => {
+  document.getElementById("redeem-overlay").classList.add("active");
+  document.getElementById("menu-overlay").classList.remove("active");
+});
+
+document.getElementById("close-redeem").addEventListener("click", () => {
+  document.getElementById("redeem-overlay").classList.remove("active");
+});
+
+// ==========================
+// Init
+// ==========================
+updateHUD();
