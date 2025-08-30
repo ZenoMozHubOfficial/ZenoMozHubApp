@@ -1,6 +1,10 @@
 /* =============================
-   script.js — stable + XP HUD
+   script.js — FULL MERGED
    ============================= */
+
+/* --- Disable text selection & context menu --- */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
 
 /* --- Click sound --- */
 function playClick() {
@@ -59,7 +63,7 @@ function connectVisualizer(audio) {
     source = audioCtx.createMediaElementSource(audio);
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
-    analyser.fftSize = 256; // Higher resolution
+    analyser.fftSize = 256;
     renderVisualizer();
     pulseElements();
   } catch (e) {
@@ -186,24 +190,9 @@ function finishLoading() {
   }, 400);
 }
 
-/* --- Button hold/tap scale --- */
-btns.forEach(btn => {
-  btn.addEventListener('mousedown', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; });
-  btn.addEventListener('mouseup', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
-  btn.addEventListener('mouseleave', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
-  btn.addEventListener('touchstart', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; }, {passive:true});
-  btn.addEventListener('touchend', () => { btn.dataset.pressed = ''; btn.style.transform = ''; }, {passive:true});
-});
-
-/* --- Particles.js safe init --- */
-if (typeof particlesJS === 'function') {
-  // already initialized in HTML bottom script
-}
-
 /* ============================
    XP + Level System
    ============================ */
-
 let xp = parseInt(localStorage.getItem("zmh_xp")) || 0;
 let level = parseInt(localStorage.getItem("zmh_level")) || 1;
 const maxLevel = 10000;
@@ -279,4 +268,34 @@ window.zmh.getProgress = () => ({ xp, level });
 /* --- Auto start loading on page load --- */
 window.addEventListener("load", () => {
   startLoading();
+});
+
+/* ============================
+   Button Smooth Press Scaling
+   ============================ */
+btns.forEach(btn => {
+  btn.addEventListener('mousedown', () => {
+    btn.dataset.pressed = 'true';
+    btn.style.transition = "transform 0.18s ease";
+    btn.style.transform = "scale(0.92)";
+  });
+  btn.addEventListener('mouseup', () => {
+    btn.dataset.pressed = '';
+    btn.style.transform = "scale(1)";
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.dataset.pressed = '';
+    btn.style.transform = "scale(1)";
+  });
+
+  // Touch (mobile)
+  btn.addEventListener('touchstart', () => {
+    btn.dataset.pressed = 'true';
+    btn.style.transition = "transform 0.18s ease";
+    btn.style.transform = "scale(0.92)";
+  }, {passive:true});
+  btn.addEventListener('touchend', () => {
+    btn.dataset.pressed = '';
+    btn.style.transform = "scale(1)";
+  }, {passive:true});
 });
