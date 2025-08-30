@@ -10,14 +10,8 @@
 </head>
 <body>
 
-  <!-- Burger Menu -->
-  <div class="burger" id="burger">&#9776;</div>
-  <nav class="menu" id="menu">
-    <button id="menu-code">💻 Code</button>
-  </nav>
-
   <!-- Level HUD -->
-  <div id="level-hud" aria-hidden="false">
+  <div id="level-hud">
     <div id="level-label">LVL <span id="level-display">1</span></div>
     <div id="xp-bar"><div id="xp-fill"></div></div>
     <div id="xp-text">0 / 100 XP</div>
@@ -82,32 +76,26 @@
 
   <div class="version-text">version: 1.0.1</div>
 
-  <!-- Code Redeem GUI -->
-  <div id="code-gui" class="hidden">
-    <div class="code-box">
-      <h2>Enter Code</h2>
-      <input type="text" id="code-input" placeholder="Enter your code...">
-      <button id="code-submit">Submit</button>
-      <p id="code-result"></p>
+  <!-- Hamburger Menu -->
+  <div id="burger">&#9776;</div>
+  <div id="sidebar">
+    <a href="#" id="redeem-btn">🎁 Redeem Code</a>
+    <a href="#">⚙️ Settings (coming soon)</a>
+    <a href="#">💬 Feedback (coming soon)</a>
+  </div>
+
+  <!-- Redeem Overlay -->
+  <div id="redeem-overlay">
+    <div id="redeem-box">
+      <h2>🎁 Redeem Code</h2>
+      <input type="text" id="redeem-input" placeholder="Enter your code..." />
+      <button id="redeem-submit">Redeem</button>
+      <p id="redeem-message"></p>
+      <button id="redeem-close">Close</button>
     </div>
+    <div id="redeem-particles"></div>
   </div>
 
   <script src="js/script.js"></script>
-
-  <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 200 },
-        "color": { "value": "#ff3333" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.5, "random": true },
-        "size": { "value": 3, "random": true },
-        "line_linked": { "enable": true, "distance": 150, "color": "#ff3333", "opacity": 0.4, "width": 1 },
-        "move": { "enable": true, "speed": 1.6 }
-      },
-      "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
-      "retina_detect": true
-    });
-  </script>
 </body>
 </html>
