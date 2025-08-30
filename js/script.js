@@ -304,27 +304,56 @@ document.addEventListener('click', function __zmh_resume() {
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
-/* === your full script.js stays exactly the same === */
+// === XP & Level System ===
+let playerXP = 0;
+let playerLevel = 1;
+let xpNeeded = 100;
 
-/* =============================
-   Burger Menu Toggle
-   ============================= */
-document.addEventListener("DOMContentLoaded", () => {
-  const burger = document.querySelector(".burger");
-  const sideMenu = document.querySelector(".side-menu");
+function updateHUD() {
+  document.getElementById("level-display").textContent = playerLevel;
+  document.getElementById("xp-fill").style.width = (playerXP / xpNeeded * 100) + "%";
+  document.getElementById("xp-text").textContent = playerXP + " / " + xpNeeded + " XP";
+}
 
-  if (burger && sideMenu) {
-    burger.addEventListener("click", () => {
-      burger.classList.toggle("active");
-      sideMenu.classList.toggle("active");
-    });
-
-    // Close menu when clicking a link
-    sideMenu.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", () => {
-        burger.classList.remove("active");
-        sideMenu.classList.remove("active");
-      });
-    });
+function addXP(amount) {
+  playerXP += amount;
+  if (playerXP >= xpNeeded) {
+    playerXP -= xpNeeded;
+    playerLevel++;
+    xpNeeded = Math.floor(xpNeeded * 1.25); // harder each level
   }
-});
+  updateHUD();
+}
+
+function addLevel(amount) {
+  playerLevel += amount;
+  updateHUD();
+}
+
+// === Redeem Codes System ===
+const redeemCodes = {
+  "Sub4Moz": { reward: () => addXP(600), used: false },
+  "JustMeAl3x": { reward: () => addLevel(10), used: false },
+  // 💡 add more like:
+  // "NewCode": { reward: () => addXP(2000), used: false }
+};
+
+function redeemCode() {
+  const codeInput = document.getElementById("code-input").value.trim();
+  const message = document.getElementById("code-message");
+
+  if (redeemCodes[codeInput]) {
+    if (!redeemCodes[codeInput].used) {
+      redeemCodes[codeInput].reward();
+      redeemCodes[codeInput].used = true;
+      message.textContent = "✅ Code redeemed!";
+      message.style.color = "lime";
+    } else {
+      message.textContent = "⚠️ Code already used!";
+      message.style.color = "orange";
+    }
+  } else {
+    message.textContent = "❌ Invalid code!";
+    message.style.color = "red";
+  }
+}
