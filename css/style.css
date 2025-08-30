@@ -211,102 +211,85 @@ p { margin-top: 8px; color: #d0d0d0; font-size: 14px; }
   #level-hud { width: 170px; left: 10px; top: 10px; padding: 8px; }
   #start-btn { padding: 18px 36px; font-size: 22px; }
   .btn { min-width: 180px; font-size: 14px; }
-}body {
+               }
+body {
   margin: 0;
   font-family: 'Orbitron', sans-serif;
-  background: black;
   color: white;
+  background: black;
   overflow-x: hidden;
 }
 
-.container {
-  text-align: center;
-  margin-top: 100px;
-}
-
-.logo img {
-  width: 120px;
-}
-
-.buttons {
-  margin-top: 20px;
-}
-
-.btn {
-  padding: 10px 20px;
-  margin: 8px;
-  background: #ff3333;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-}
-.btn:hover { background: #cc0000; }
-
-/* Burger Menu */
-.burger {
-  font-size: 30px;
-  cursor: pointer;
+/* Burger */
+#burger {
   position: fixed;
   top: 15px;
-  left: 15px;
-  z-index: 1000;
-}
-
-.menu {
-  display: none;
-  flex-direction: column;
-  position: fixed;
-  top: 60px;
-  left: 15px;
-  background: rgba(0,0,0,0.8);
-  padding: 15px;
-  border-radius: 8px;
-  z-index: 999;
-}
-.menu button {
-  margin: 5px 0;
-  padding: 10px;
-  background: #ff3333;
-  border: none;
-  border-radius: 6px;
-  color: white;
+  right: 20px;
+  font-size: 2rem;
   cursor: pointer;
-}
-.menu button:hover { background: #cc0000; }
-.menu.show { display: flex; }
-
-/* Code GUI */
-#code-gui {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.9);
-  padding: 20px;
-  border-radius: 10px;
   z-index: 2000;
 }
-#code-gui.hidden { display: none; }
-.code-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+
+/* Sidebar */
+#sidebar {
+  position: fixed;
+  top: 0;
+  right: -250px;
+  width: 250px;
+  height: 100%;
+  background: rgba(20,20,20,0.95);
+  box-shadow: -3px 0 10px rgba(0,0,0,0.5);
+  transition: right 0.3s ease;
+  padding: 60px 20px;
+  z-index: 1999;
 }
-#code-input {
-  padding: 10px;
-  font-size: 16px;
+#sidebar a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 1.2rem;
 }
-#code-submit {
-  background: #ff3333;
+#sidebar.active {
+  right: 0;
+}
+
+/* Redeem Overlay */
+#redeem-overlay {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.95);
+  z-index: 3000;
+}
+#redeem-box {
+  position: relative;
+  z-index: 3001;
+  text-align: center;
+  top: 20%;
+}
+#redeem-box h2 { margin-bottom: 20px; }
+#redeem-input {
   padding: 10px;
+  width: 250px;
+  font-size: 1rem;
+}
+#redeem-submit, #redeem-close {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: crimson;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
   color: white;
+  cursor: pointer;
 }
-#code-submit:hover { background: #cc0000; }
-#code-result {
-  margin-top: 10px;
-  font-size: 14px;
-  }
+#redeem-message {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+#redeem-particles {
+  position: absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index: 3000;
+}
