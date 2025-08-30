@@ -304,6 +304,14 @@ document.addEventListener('click', function __zmh_resume() {
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
+// === Burger Toggle ===
+const burger = document.querySelector(".burger");
+const sideMenu = document.querySelector(".side-menu");
+
+burger.addEventListener("click", () => {
+  sideMenu.classList.toggle("show");
+});
+
 // === XP & Level System ===
 let playerXP = 0;
 let playerLevel = 1;
@@ -320,7 +328,7 @@ function addXP(amount) {
   if (playerXP >= xpNeeded) {
     playerXP -= xpNeeded;
     playerLevel++;
-    xpNeeded = Math.floor(xpNeeded * 1.25); // harder each level
+    xpNeeded = Math.floor(xpNeeded * 1.25);
   }
   updateHUD();
 }
@@ -334,8 +342,6 @@ function addLevel(amount) {
 const redeemCodes = {
   "Sub4Moz": { reward: () => addXP(600), used: false },
   "JustMeAl3x": { reward: () => addLevel(10), used: false },
-  // 💡 add more like:
-  // "NewCode": { reward: () => addXP(2000), used: false }
 };
 
 function redeemCode() {
@@ -357,3 +363,6 @@ function redeemCode() {
     message.style.color = "red";
   }
 }
+
+// === Init HUD ===
+updateHUD();
