@@ -31,8 +31,6 @@ function changeMusic(src) {
 }
 
 /* --- DOM elements --- */
-const startOverlay = document.getElementById('start-overlay');
-const startBtn = document.getElementById('start-btn');
 const btns = document.querySelectorAll('.buttons .btn');
 const logo = document.querySelector('.logo img');
 const loadingScreen = document.getElementById('loading-screen');
@@ -65,7 +63,6 @@ function connectVisualizer(audio) {
     renderVisualizer();
     pulseElements();
   } catch (e) {
-    // some browsers throw if reused; tolerate it
     console.warn('connectVisualizer error', e);
   }
 }
@@ -88,7 +85,6 @@ function renderVisualizer() {
 
   for (let i = 0; i < bufferLength; i++) {
     const barHeight = dataArray[i];
-
     const hue = (i * 3 + Date.now() * 0.05) % 360;
     ctx.fillStyle = `hsl(${hue},100%,50%)`;
 
@@ -98,6 +94,19 @@ function renderVisualizer() {
     ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     x += barWidth + 1;
   }
+
+  // wave line
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height / 2);
+  for (let i = 0; i < bufferLength; i++) {
+    const y = canvas.height / 2 - (dataArray[i] / 3);
+    const x = (i / bufferLength) * canvas.width;
+    ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
 
 /* --- Pulse Buttons & Logo to Music --- */
 let pulseRunning = false;
@@ -114,7 +123,6 @@ function pulseElements() {
 
   btns.forEach(btn => {
     const scale = 1 + bass/400;
-    // do not override the pressed transform (hold)
     if (!btn.dataset.pressed) btn.style.transform = `scale(${scale})`;
   });
 
@@ -178,12 +186,7 @@ function finishLoading() {
   }, 400);
 }
 
-
-/* --- Skip Loading --- */
-if (loadingScreen) loadingScreen.addEventListener('click', finishLoading);
-if (loadingScreen) loadingScreen.addEventListener('touchstart', finishLoading);
-
-/* --- Button hold/tap scale (preserve press state) --- */
+/* --- Button hold/tap scale --- */
 btns.forEach(btn => {
   btn.addEventListener('mousedown', () => { btn.dataset.pressed = 'true'; btn.style.transform = 'scale(1.12)'; });
   btn.addEventListener('mouseup', () => { btn.dataset.pressed = ''; btn.style.transform = ''; });
@@ -198,25 +201,21 @@ if (typeof particlesJS === 'function') {
 }
 
 /* ============================
-   XP + Level System (mobile-safe)
+   XP + Level System
    ============================ */
 
-/* Load saved values or defaults */
 let xp = parseInt(localStorage.getItem("zmh_xp")) || 0;
 let level = parseInt(localStorage.getItem("zmh_level")) || 1;
 const maxLevel = 10000;
 
-/* DOM Elements for HUD */
 const levelDisplay = document.getElementById("level-display");
 const xpFill = document.getElementById("xp-fill");
 const xpText = document.getElementById("xp-text");
 
-/* XP needed formula */
 function xpNeededForLevel(lvl) {
   return 100 + (lvl - 1) * 20;
 }
 
-/* Save progress */
 function saveProgress() {
   try {
     localStorage.setItem("zmh_xp", String(xp));
@@ -224,11 +223,9 @@ function saveProgress() {
   } catch(e) {}
 }
 
-/* Update HUD and handle level ups (handles multiple level-ups at once) */
 function updateHUD() {
   if (!xpFill || !levelDisplay || !xpText) return;
 
-  // handle level ups
   let needed = xpNeededForLevel(level);
   while (xp >= needed && level < maxLevel) {
     xp -= needed;
@@ -248,20 +245,16 @@ function updateHUD() {
   saveProgress();
 }
 
-/* Add XP safely */
 function addXP(amount) {
   if (typeof amount !== 'number' || amount <= 0) return;
   xp += Math.floor(amount);
   updateHUD();
 }
 
-/* Idle XP - 1 XP per second while page open */
 let idleInterval = setInterval(() => {
   addXP(1);
 }, 1000);
 
-/* Button XP: default +5, +100 for social-like buttons */
-/* We'll treat buttons that have class 'social' or a data attribute data-social as social */
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', () => {
     let reward = 5;
@@ -270,21 +263,20 @@ document.querySelectorAll('.btn').forEach(btn => {
   });
 });
 
-/* initialize HUD display right away */
 updateHUD();
 
-/* Auto-resume audio context on user click (mobile webview gesture) */
+/* Auto-resume audio context */
 document.addEventListener('click', function __zmh_resume() {
   try {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   } catch(e){}
 }, {once: true});
 
-/* Expose helpers for debugging in console (optional) */
 window.zmh = window.zmh || {};
 window.zmh.addXP = addXP;
 window.zmh.getProgress = () => ({ xp, level });
-// Auto-start loading screen on page load
+
+/* --- Auto start loading on page load --- */
 window.addEventListener("load", () => {
   startLoading();
 });
