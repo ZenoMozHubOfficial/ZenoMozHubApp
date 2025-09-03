@@ -253,50 +253,7 @@ document.querySelectorAll('.btn').forEach(btn => {
 });
 
 updateHUD();
-// Daily Reward Button
-const dailyBtn = document.getElementById('daily-reward-btn');
-const dailyClaimSound = new Audio('sounds/daily-claim.mp3');
-dailyClaimSound.volume = 0.7;
 
-function canClaimDaily() {
-  const lastClaim = localStorage.getItem('zmh_last_daily');
-  if (!lastClaim) return true;
-  const lastDate = new Date(lastClaim);
-  const now = new Date();
-  return now.toDateString() !== lastDate.toDateString();
-}
-
-function claimDailyReward() {
-  if (!canClaimDaily()) {
-    alert("You already claimed today's reward!");
-    return;
-  }
-
-  // Play claim sound
-  dailyClaimSound.play().catch(() => {});
-
-  // Give 1 level
-  level = Math.min(level + 1, maxLevel);
-  xp = 0; // optional: reset XP
-  updateHUD();
-
-  // Save last claim
-  localStorage.setItem('zmh_last_daily', new Date().toString());
-  alert("Daily reward claimed! +1 level");
-
-  // Disable button until tomorrow
-  dailyBtn.classList.add('disabled');
-}
-
-// Initialize button
-dailyBtn.addEventListener('click', claimDailyReward);
-dailyBtn.addEventListener('mousedown', playClick); // optional click sound
-dailyBtn.addEventListener('touchstart', playClick, {passive:true});
-
-// Disable if already claimed today
-if (!canClaimDaily()) {
-  dailyBtn.classList.add('disabled');
-}
 /* Auto-resume audio context */
 document.addEventListener('click', function __zmh_resume() {
   try {
